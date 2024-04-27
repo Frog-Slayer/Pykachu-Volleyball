@@ -1,4 +1,4 @@
-import gym
+import gymnasium
 import numpy as np
 import time
 import pykachu_physics
