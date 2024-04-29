@@ -153,6 +153,7 @@ def physicsEngine(player1, player2, ball, userInputArray):
                 
     return isBallTouchingGround
     
+
 def isCollisionBetweenBallAndPlayerHappened(ball, playerX, playerY):
     diff = ball.x = playerX
     if (abs(diff) <= PLAYER_HALF_LENGTH):

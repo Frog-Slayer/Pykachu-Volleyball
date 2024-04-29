@@ -5,7 +5,9 @@ from gymnasium.utils.play import play
 
 import pykachu_env
 
-env = pykachu_env.PykachuEnv(False, False)
-env.render_mode = 'rgb_array'
-play(env, keys_to_action={(pygame.K_SPACE,): np.array([1])}, noop=np.array([0]),
-     fps=24)
+env = pykachu_env.PykachuEnv(True, False)
+env.render_mode = 'human'
+
+
+for i in range(20):
+    observation = env.reset()

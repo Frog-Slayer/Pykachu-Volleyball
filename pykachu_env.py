@@ -5,6 +5,9 @@ import pygame
 from gymnasium.spaces import MultiDiscrete, Box
 
 import pykachu_physics
+from constants import (
+    GROUND_HEIGHT, GROUND_WIDTH, GROUND_HALF_WIDTH
+)
 from pykachu_render import GameViewDrawer
 from pykachu_physics import PikaPhysics
 
@@ -13,12 +16,16 @@ RL environment for 'single' agent. The opponent is the basic AI, originally impl
 Multi-agent environment using pettingzoo will be added later
 """
 class PykachuEnv(gym.Env):
-    action_space = MultiDiscrete([5, 1]) 
+    action_space = MultiDiscrete([3, 3, 1]) 
     """
-    player's move(4 direction)
+    (none, up, down), (node, left, right), (none, power hit)
     """
-
-    observation_space = 0;
+    
+    observation_space = Box(low = 0, high = 255, shape=(GROUND_WIDTH, GROUND_HEIGHT, 3),
+                            dtype=np.uint8)
+    """
+    The Space object for all valid observations, corresponding to rendered display of the game(in RGB)
+    """                        
 
     metadata = {'render.modes': ['human']}
     """
@@ -27,30 +34,33 @@ class PykachuEnv(gym.Env):
 
     def __init__(self, isPlayer1Computer, isPlayer2Computer):
         self.physics = PikaPhysics(isPlayer1Computer, isPlayer2Computer)
-
         self._surface = None
         return
 
+    @property
+    def observation(self):
+        pixels = pygame.surfarray.pixels3d(self._surface)
+        return np.transform(np.array(pixels), axes=(1, 0, 2))
+
     def step(self, action):
-        isBallTouchingGround = self.physics.runEngineForNextFrame(self.player1, self.player2, self.ball, action)
-
-        obs_p1 = [self.ball.x, self.ball.xVelocity, self.ball.y, self.ball.yVelocity,
-                  self.player1.x, self.player1.y, self.player2.x, self.player2.y]
-
-        obs_p2 = [self.ball.x, self.ball.xVelocity, self.ball.y, self.ball.yVelocity,
-                  self.player1.x, self.player1.y, self.player2.x, self.player2.y]
-        observation = (obs_p1, obs_p2)
+        isBallTouchingGround = self.physics.runEngineForNextFrame(self.physics.player1, self.physics.player2, 
+                                                        self.physics.ball, action)
         
-        if (isBallTouchingGround):
-            if (self.ball.x < pykachu_physics.GROUND_HALF_WIDTH):
-                return observation, 1, True, {}
+        if isBallTouchingGround:
+            if self.physics.ball.punchEffectX < GROUND_HALF_WIDTH:
+                self.isPlayer2Serve = True
+                self.reward = -1
             else:
-                return observation, -1, True, {}
+                self.isPlayer2Serve = False
+                self.reward = 1
 
-        if self.render_mode == "human":
-            self.render()
+            self.terminated = True
+        else:
+            self.reward = 0
 
-        return observation, 0, False, {}
+
+        return self.observation, self.reward, self.terminated
+
 
     def render(self):
         if self._surface is None:
