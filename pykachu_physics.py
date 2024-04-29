@@ -1,5 +1,6 @@
 import random as random
 import math
+
 from constants import (
     GROUND_WIDTH,
     GROUND_HALF_WIDTH,
@@ -16,8 +17,8 @@ from constants import (
 
 class PikaPhysics:
     def __init__(self, isPlayer1Computer, isPlayer2Computer):
-        self.player1 = Player(False, isPlayer1Computer)
-        self.player2 = Player(True, isPlayer2Computer)
+        self.player1 = Player(isPlayer2= False, isComputer= isPlayer1Computer)
+        self.player2 = Player(isPlayer2= True, isComputer= isPlayer2Computer)
         self.ball = Ball(False)
         return
     
@@ -36,7 +37,7 @@ class Player:
     def __init__(self, isPlayer2, isComputer):
         self.isPlayer2  = isPlayer2
         self.isComputer = isComputer
-        self.initializeForNewRound(self)
+        self.initializeForNewRound()
         
         self.divingDirection        = 0
         self.lyingDownDurationLeft  = -1
@@ -48,20 +49,21 @@ class Player:
         return
     
     def initializeForNewRound(self):
+
         self.x = 3
         if (self.isPlayer2):
             self.x = GROUND_WIDTH - 36
         
-        self.y              = PLAYER_TOUCHING_GROUND_Y_COORD
-        self.yVelocity      = 0
+        self.y = PLAYER_TOUCHING_GROUND_Y_COORD
+        self.yVelocity = 0
         self.isCollisionWithBallHappened = False
         
-        self.state          = 0 
-        self.frameNumber    = 0
+        self.state = 0 
+        self.frameNumber = 0
         self.normalStatusArmSwingDirection  = 1
-        self.delayBeforeNextFrame           = 0
+        self.delayBeforeNextFrame = 0
         
-        self.computerBoldness   =   rand() % 5
+        self.computerBoldness = rand() % 5
         return
     
 class Ball:
@@ -73,21 +75,23 @@ class Ball:
         self.punchEffectX   = 0
         self.punchEffectY   = 0
 
+        # for ball trail
         self.previousX      = 0
         self.previousPreviousX = 0
         self.previousY      = 0
         self.previousPreviousY = 0
         
-        #self.sound = {
+        #self.sound 
         return
+
     def initializeForNewRound(self, isPlayer2Serve):
-        self.x          = 56
+        self.x = 56
         if (isPlayer2Serve):
-            self.x          = GROUND_WIDTH - 56
+            self.x = GROUND_WIDTH - 56
         
-        self.y          = 0
-        self.xVelocity  = 0
-        self.yVelocity  = 0
+        self.y = 0
+        self.xVelocity = 0
+        self.yVelocity = 0
         self.punchEffectRadius = 0
         self.isPowerHit = False    
         return
@@ -99,10 +103,8 @@ class CopyBall:
         self.xVelocity = xVelocity
         self.yVelocity = yVelocity
 
-
 def rand():
     return math.floor(32768 * random.random())
-
 
 def physicsEngine(player1, player2, ball, userInputArray):
     isBallTouchingGround = processCollisionBetweenBallAndWorldAndSetBallPosition(ball)
@@ -149,10 +151,7 @@ def physicsEngine(player1, player2, ball, userInputArray):
         else:
             player.isCollisionWithBallHappened = False
                 
-                
     return isBallTouchingGround
-    
-    
     
 def isCollisionBetweenBallAndPlayerHappened(ball, playerX, playerY):
     diff = ball.x = playerX
@@ -162,7 +161,6 @@ def isCollisionBetweenBallAndPlayerHappened(ball, playerX, playerY):
             return True
         
     return False
-        
         
 def processCollisionBetweenBallAndWorldAndSetBallPosition(ball):
     ball.previousPreviousX  = ball.previousX
@@ -488,6 +486,7 @@ def expectedLandingPointXWhenPowerHit(userInputXDirection, userInputYDirection, 
         copyBall.xVelocity = abs(userInputXDirection + 1) * 10
     else:
         copyBall.xVelocity = -abs(userInputXDirection + 1) * 10
+
     copyBall.yVelocity = abs(copyBall.yVelocity) * userInputYDirection * 2
     
     loopCounter = 0

@@ -79,17 +79,24 @@ class BallAnimatedSprite(pygame.sprite.Sprite):
         for _ in ballTextureArray:
             images.append(Texture.getCroppedImage(_))
         
-            self.images = images
-            self.index = 0
-            self.image = self.images[self.index]
+        self.images = images
+        self.index = 0
+        self.image = self.images[self.index]
+        self.position = position
 
     def update(self):
         self.index = (self.index + 1) % len(self.images);
         self.image = self.images[self.index]
+        self.rect = self.image.get_rect()
+        self.rect.center = self.position
+
+    def set_position(self, x, y):
+        self.position = (x, y)
+
 
 class PlayerAnimatedSprite(pygame.sprite.Sprite):
     def __init__(self, position):
-            super(BallAnimatedSprite, self).__init__()
+            super(PlayerAnimatedSprite, self).__init__()
 
             images = []
             for i in range(7):
@@ -102,11 +109,81 @@ class PlayerAnimatedSprite(pygame.sprite.Sprite):
                     for j in range(5):
                         images.append(Texture.getCroppedImage(Texture.getPikachuTexture(i, j)))
 
-                self.images = images
-                self.index = 0
-                self.image = self.images[self.index]
+            self.images = images
+            self.index = 0
+            self.image = self.images[self.index]
+            self.position = position
+
+            self.scale.x = 1
+            self.scale.y = 1
 
     def update(self):
         self.index = (self.index + 1) % len(self.images);
-        self.image = self.images[self.index]
+        self.image = pygame.transform.scale_by(self.images[self.index], (self.scale.x, self.scale.y))
+        self.rect = self.image.get_rect()
+        self.rect.center = self.position
 
+class SpriteWithAnchor(pygame.sprite.Sprite):
+
+    def __init__(self, path, position):
+        self.image = Texture.getCroppedImage(path) 
+        self.position = position
+        self.scale.x = 1
+        self.scale.y = 1
+
+    def update(self):
+        self.image = pygame.transform.scale_by(self.image, (self.scale.x, self.scale.y))
+        self.rect = self.image.get_rect()
+        self.rect.center = self.position
+
+class GameViewDrawer:
+    
+    def __init__(self):
+        self.player1 = PlayerAnimatedSprite((0, 0))
+        self.player2 = PlayerAnimatedSprite((0, 0))
+        self.ball = BallAnimatedSprite((0, 0))
+        self.ballTrail = SpriteWithAnchor(Texture.BALL_TRAIL, (0.5, 0.5))
+        self.ballHyper = SpriteWithAnchor(Texture.BALL_HYPER, (0.5, 0.5))
+        self.punch = SpriteWithAnchor(Texture.BALL_PUNCH, (0.5, 0.5))
+    
+    def draw_players_and_ball(self, physics):
+        player1 = physics.player1
+        player2 = physics.player2
+        ball = physics.ball
+
+        self.player1.position = (player1.x, player1.y)
+
+        if player1.state == 3 or player1.state == 4:
+            self.player1.scale.x = -1 if player1.divingDirection == -1 else 1 
+        else:
+            self.player1.scale.x = 1
+
+        self.player2.x = player2.x
+        self.player2.y = player2.y
+
+        if player2.state == 3 or player2.state == 4:
+            self.player2.scale.x = 1 if player2.divingDirection == 1 else -1 
+        else:
+            self.player2.scale.x = -1
+
+        self.ball.position = (ball.x, ball.y)
+
+        if ball.punchEffectRadius > 0:
+            ball.punchEffectRadius -= 2
+            self.punch.scale= (2 * ball.punchEffectRadius, 2 * ball.punchEffectRadius)
+            self.punch.position = (ball.punchEffectX, ball.punchEffectY)
+            self.punch.visible = True
+        else:
+            self.punch.visible = False
+        
+        if ball.isPowerHit:
+            self.ballHyper.x = ball.previousX
+            self.ballHyper.y = ball.previousY
+            self.ballTrail.x = ball.previousPreviousX
+            self.ballTrail.y = ball.previousPreviousY
+            
+            self.ballHyper.visible = True
+            self.ballTrail.visible = True
+        else:
+            self.ballHyper.visible = False
+            self.ballTrail.visible = False
