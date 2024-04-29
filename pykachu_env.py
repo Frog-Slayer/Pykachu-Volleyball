@@ -68,6 +68,7 @@ class PykachuEnv(gym.Env):
 
             if self.render_mode == 'human':
                 pygame.display.init()
+                pygame.display.set_mode((GROUND_WIDTH, GROUND_HEIGHT))
                 pygame.display.set_caption('Pykachu Volleyball')
                 self.gameView = GameViewDrawer()
 
@@ -81,18 +82,5 @@ class PykachuEnv(gym.Env):
     def reset(self, seed):
         super().reset(seed = seed)
 
-        ball = self.physics.ball
-        player1 = self.physics.player1
-        player2 = self.physics.player2
-
-        obs_p1 = [ball.x, ball.xVelocity, ball.y, ball.yVelocity,
-                  player1.x, player1.y, player2.x, player2.y]
-
-        obs_p2 = [ball.x, ball.xVelocity, ball.y, ball.yVelocity,
-                  player1.x, player1.y, player2.x, player2.y]
-
-        observation = (obs_p1, obs_p2)
-
-        return observation 
-    
+        return self.observation
     

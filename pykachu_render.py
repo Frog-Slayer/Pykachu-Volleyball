@@ -11,6 +11,11 @@ with open(IMAGE_PATH+ '/sprite_sheet.json') as f:
 
 sprite_png = Image.open(IMAGE_PATH + '/sprite_sheet.png') 
 
+class Scale:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+
 class Texture:
     def __init__(self) -> None:
         self.SKY_BLUE = 'objects/sky_blue.png';
@@ -57,7 +62,7 @@ class Texture:
         rect = (frame['x'], frame['y'], frame['x'] + frame['w'], frame['y'] + frame['h']) 
         rect = pygame.Rect(rect)
         image = pygame.Surface(rect.size).convert()
-        image.blit(sprite_png, (0, 0), rect)
+        image.blit(image, (0, 0), rect)
 
         return image
 
@@ -114,8 +119,7 @@ class PlayerAnimatedSprite(pygame.sprite.Sprite):
             self.image = self.images[self.index]
             self.position = position
 
-            self.scale.x = 1
-            self.scale.y = 1
+            self.scale = Scale(1, 1) 
 
     def update(self):
         self.index = (self.index + 1) % len(self.images);
@@ -128,8 +132,7 @@ class SpriteWithAnchor(pygame.sprite.Sprite):
     def __init__(self, path, position):
         self.image = Texture.getCroppedImage(path) 
         self.position = position
-        self.scale.x = 1
-        self.scale.y = 1
+        self.scale = Scale(1, 1) 
 
     def update(self):
         self.image = pygame.transform.scale_by(self.image, (self.scale.x, self.scale.y))
@@ -139,12 +142,14 @@ class SpriteWithAnchor(pygame.sprite.Sprite):
 class GameViewDrawer:
     
     def __init__(self):
+        self.texture = Texture()
+
         self.player1 = PlayerAnimatedSprite((0, 0))
         self.player2 = PlayerAnimatedSprite((0, 0))
         self.ball = BallAnimatedSprite((0, 0))
-        self.ballTrail = SpriteWithAnchor(Texture.BALL_TRAIL, (0.5, 0.5))
-        self.ballHyper = SpriteWithAnchor(Texture.BALL_HYPER, (0.5, 0.5))
-        self.punch = SpriteWithAnchor(Texture.BALL_PUNCH, (0.5, 0.5))
+        self.ballTrail = SpriteWithAnchor(self.texture.BALL_TRAIL, (0.5, 0.5))
+        self.ballHyper = SpriteWithAnchor(self.texture.BALL_HYPER, (0.5, 0.5))
+        self.punch = SpriteWithAnchor(self.texture.BALL_PUNCH, (0.5, 0.5))
     
     def draw_players_and_ball(self, physics):
         player1 = physics.player1
