@@ -177,10 +177,8 @@ class GameViewDrawer:
             self.punch.visible = False
         
         if ball.isPowerHit:
-            self.ballHyper.x = ball.previousX
-            self.ballHyper.y = ball.previousY
-            self.ballTrail.x = ball.previousPreviousX
-            self.ballTrail.y = ball.previousPreviousY
+            self.ballHyper.position = (ball.previousX, ball.previousY)
+            self.ballTrail.position = (ball.previousPreviousX, ball.previousPreviousY)
             
             self.ballHyper.visible = True
             self.ballTrail.visible = True
