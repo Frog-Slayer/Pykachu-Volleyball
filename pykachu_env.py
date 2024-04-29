@@ -43,8 +43,7 @@ class PykachuEnv(gym.Env):
         return np.transform(np.array(pixels), axes=(1, 0, 2))
 
     def step(self, action):
-        isBallTouchingGround = self.physics.runEngineForNextFrame(self.physics.player1, self.physics.player2, 
-                                                        self.physics.ball, action)
+        isBallTouchingGround = self.physics.runEngineForNextFrame(action)
         
         if isBallTouchingGround:
             if self.physics.ball.punchEffectX < GROUND_HALF_WIDTH:
