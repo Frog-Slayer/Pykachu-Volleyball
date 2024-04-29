@@ -14,7 +14,6 @@ from constants import (
     INFINITE_LOOP_LIMIT
 )
 
-
 class PikaPhysics:
     def __init__(self, isPlayer1Computer, isPlayer2Computer):
         self.player1 = Player(False, isPlayer1Computer)
@@ -106,7 +105,7 @@ def rand():
 
 
 def physicsEngine(player1, player2, ball, userInputArray):
-    isBallTouchingGround = processCollisionBetweenBallAndWorldANdSetBallPosition(ball)
+    isBallTouchingGround = processCollisionBetweenBallAndWorldAndSetBallPosition(ball)
 
     for i in range(2):
         if (i == 0):
@@ -165,7 +164,7 @@ def isCollisionBetweenBallAndPlayerHappened(ball, playerX, playerY):
     return False
         
         
-def processCollisionBetweenBallAndWorldANdSetBallPosition(ball):
+def processCollisionBetweenBallAndWorldAndSetBallPosition(ball):
     ball.previousPreviousX  = ball.previousX
     ball.previousPreviousY  = ball.previousY
     ball.previousX          = ball.x

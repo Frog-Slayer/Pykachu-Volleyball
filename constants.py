@@ -1,8 +1,8 @@
 ####################### Physics #############################
 GROUND_WIDTH                    = 432
-GROUND_HALF_WIDTH               = int(GROUND_WIDTH / 2)
+GROUND_HALF_WIDTH               = GROUND_WIDTH // 2
 PLAYER_LENGTH                   = 64
-PLAYER_HALF_LENGTH              = int(PLAYER_LENGTH / 2)
+PLAYER_HALF_LENGTH              = PLAYER_LENGTH // 2
 PLAYER_TOUCHING_GROUND_Y_COORD  = 244
 BALL_RADIUS                     = 20
 BALL_TOUCHING_GROUND_Y_COORD    = 252

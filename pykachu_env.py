@@ -1,6 +1,7 @@
-import gymnasium
+import gymnasium as gym
 import numpy as np
 import time
+import pygame
 import pykachu_physics
 
 class PykachuEnv(gym.env):
@@ -12,8 +13,10 @@ class PykachuEnv(gym.env):
 
     def step(self, userInputArray):
         isBallTouchingGround = pykachu_physics.physicsEngine(self.player1, self.player2, self.ball, userInputArray)
+
         obs_p1 = [self.ball.x, self.ball.xVelocity, self.ball.y, self.ball.yVelocity,
                   self.player1.x, self.player1.y, self.player2.x, self.player2.y]
+
         obs_p2 = [self.ball.x, self.ball.xVelocity, self.ball.y, self.ball.yVelocity,
                   self.player1.x, self.player1.y, self.player2.x, self.player2.y]
         observation = (obs_p1, obs_p2)
@@ -27,8 +30,27 @@ class PykachuEnv(gym.env):
         return observation, 0, False, {}
 
     def render(self):
-        pass        
-        return
+
+        if self._surface is None:
+            pygame.init()
+
+            if self.render_mode == "human":
+                pygame.display.init()
+                pygame.display.set_caption("Pykachu Volleyball")
+            elif self.render_mode == "rgb_array":
+                return self.observation
+            
+        #화면을 그리는 로직들이 들어가야 함.
+        
+        if self.render_mode == "human":
+
+
+
+            return
+        
+
+    def drawGame(physics):
+
 
 
 
