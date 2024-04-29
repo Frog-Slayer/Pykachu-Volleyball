@@ -1,16 +1,34 @@
 import gymnasium as gym
 import numpy as np
-import time
 import pygame
+
+from gymnasium.spaces import MultiDiscrete, Box
+
 import pykachu_physics
 from pykachu_render import GameViewDrawer
 from pykachu_physics import PikaPhysics
 
+"""
+RL environment for 'single' agent. The opponent is the basic AI, originally implemented in the game.
+Multi-agent environment using pettingzoo will be added later
+"""
 class PykachuEnv(gym.Env):
+    action_space = MultiDiscrete([5, 1]) 
+    """
+    player's move(4 direction)
+    """
+
+    observation_space = 0;
+
     metadata = {'render.modes': ['human']}
+    """
+    metadata for the environment containing rendering modes, etc 
+    """
 
     def __init__(self, isPlayer1Computer, isPlayer2Computer):
         self.physics = PikaPhysics(isPlayer1Computer, isPlayer2Computer)
+
+        self._surface = None
         return
 
     def step(self, action):

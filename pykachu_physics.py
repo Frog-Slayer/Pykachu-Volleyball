@@ -389,8 +389,8 @@ def calculateExpectedLandingPointXFor(ball):
     ball.expectedLandingPointX = copyBall.x
     return
 
-def letComputerDecideUserInput(player, ball, theOtherPlayer,userInput):
-    userInput.xDIrection    = 0
+def letComputerDecideUserInput(player, ball, theOtherPlayer, userInput):
+    userInput.xDirection    = 0
     userInput.yDirection    = 0
     userInput.powerHit      = 0
     
@@ -450,7 +450,6 @@ def letComputerDecideUserInput(player, ball, theOtherPlayer,userInput):
                 if (abs(theOtherPlayer.x - player.x) < 80           and\
                     userInput.yDirection != -1):
                     userInput.yDirection = -1
-                
     return                
 
 
