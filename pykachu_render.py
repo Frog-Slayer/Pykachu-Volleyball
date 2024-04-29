@@ -9,7 +9,7 @@ SOUND_PATH = ASSETS_PATH + '/sounds'
 with open(IMAGE_PATH+ '/sprite_sheet.json') as f:
     sprite_json = json.load(f)
 
-img = Image.open(IMAGE_PATH + '/sprite_sheet.png') 
+sprite_png = Image.open(IMAGE_PATH + '/sprite_sheet.png') 
 
 class Texture:
     def __init__(self) -> None:
@@ -55,9 +55,11 @@ class Texture:
     def getCroppedImage(path): #works well
         frame = sprite_json['frames'][path]['frame']
         rect = (frame['x'], frame['y'], frame['x'] + frame['w'], frame['y'] + frame['h']) 
-        cropped_image = img.crop(rect)
-        
-        return cropped_image
+        rect = pygame.Rect(rect)
+        image = pygame.Surface(rect.size).convert()
+        image.blit(sprite_png, (0, 0), rect)
+
+        return image
 
 class BallAnimatedSprite(pygame.sprite.Sprite):
 
@@ -75,8 +77,8 @@ class BallAnimatedSprite(pygame.sprite.Sprite):
         ]
 
         for _ in ballTextureArray:
-            images.append(pygame.image.load(IMAGE_PATH + '/' +_))
-    
+            images.append(Texture.getCroppedImage(_))
+
     def update(self):
         self.index += 1;
 
