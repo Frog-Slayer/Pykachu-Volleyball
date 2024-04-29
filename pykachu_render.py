@@ -78,8 +78,35 @@ class BallAnimatedSprite(pygame.sprite.Sprite):
 
         for _ in ballTextureArray:
             images.append(Texture.getCroppedImage(_))
+        
+            self.images = images
+            self.index = 0
+            self.image = self.images[self.index]
 
     def update(self):
-        self.index += 1;
+        self.index = (self.index + 1) % len(self.images);
+        self.image = self.images[self.index]
 
+class PlayerAnimatedSprite(pygame.sprite.Sprite):
+    def __init__(self, position):
+            super(BallAnimatedSprite, self).__init__()
+
+            images = []
+            for i in range(7):
+                if i == 3:
+                    images.append(Texture.getCroppedImage(Texture.getPikachuTexture(i, 0)))
+                    images.append(Texture.getCroppedImage(Texture.getPikachuTexture(i, 1)))
+                elif i == 4:
+                    images.append(Texture.getCroppedImage(Texture.getPikachuTexture(i, 0)))
+                else:
+                    for j in range(5):
+                        images.append(Texture.getCroppedImage(Texture.getPikachuTexture(i, j)))
+
+                self.images = images
+                self.index = 0
+                self.image = self.images[self.index]
+
+    def update(self):
+        self.index = (self.index + 1) % len(self.images);
+        self.image = self.images[self.index]
 
