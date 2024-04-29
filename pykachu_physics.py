@@ -27,10 +27,16 @@ class PikaPhysics:
         return isBallTouchingGround
     
 class PikaUserInput:
-    def __init__(self):
+    def __init__ (self):
         self.xDirection = 0
         self.yDirection = 0
-        self.powerHit   = 0
+        self.powerHit = 0
+        return
+    
+    def __init__(self, action):
+        self.yDirection = action[0]
+        self.xDirection = action[1]
+        self.powerHit   = action[2]
         return
     
 class Player:
@@ -199,7 +205,7 @@ def processCollisionBetweenBallAndWorldAndSetBallPosition(ball):
                 ball.xVelocity = abs(ball.xVelocity)
                     
                 
-    futureBallY             = ball.y + ball.yVelocity
+    futureBallY = ball.y + ball.yVelocity
     if (futureBallY > BALL_TOUCHING_GROUND_Y_COORD):
         #ball.sound.ballTouchesGround    = True
         ball.yVelocity                  = -ball.yVelocity
