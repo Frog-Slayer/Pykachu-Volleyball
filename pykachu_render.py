@@ -66,9 +66,7 @@ class Texture:
         rect = (frame['x'], frame['y'], frame['w'], frame['h']) 
         rect = pygame.Rect(rect)
         image = pygame.Surface(rect.size).convert()
-        print(rect.size)
         image.blit(self.sheet, (0, 0), rect)
-        print(image)
         return image
 
 class BallAnimatedSprite(pygame.sprite.Sprite):
@@ -168,20 +166,21 @@ class GameViewDrawer:
         self.ballHyper = SpriteWithAnchor(self.texture.BALL_HYPER, (0.5, 0.5), texture)
         self.punch = SpriteWithAnchor(self.texture.BALL_PUNCH, (0.5, 0.5), texture)
     
-    def draw_players_and_ball(self, physics, surface):
+    def draw_players_and_ball(self, physics):
         player1 = physics.player1
         player2 = physics.player2
         ball = physics.ball
 
         self.player1.position = (player1.x, player1.y)
+        print("player1:" + str(self.player1.position))
 
         if player1.state == 3 or player1.state == 4:
             self.player1.scale.x = -1 if player1.divingDirection == -1 else 1 
         else:
             self.player1.scale.x = 1
 
-        self.player2.x = player2.x
-        self.player2.y = player2.y
+        self.player2.position = (player2.x, player2.y)
+        print("player2:" + str(self.player2.position))
 
         if player2.state == 3 or player2.state == 4:
             self.player2.scale.x = 1 if player2.divingDirection == 1 else -1 

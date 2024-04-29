@@ -80,7 +80,7 @@ class PykachuEnv(gym.Env):
         if self.render_mode == 'human':
             pygame.event.pump()
             self._surface.fill((0, 0, 0))
-            self.gameView.draw_players_and_ball(self.physics, self._surface) 
+            self.gameView.draw_players_and_ball(self.physics) 
             pygame.display.update()
             self.clock.tick(25)
 
