@@ -183,42 +183,28 @@ class BackgroundSprite(pygame.sprite.Sprite):
     def drawSky(self):
         for j in range(12):
             for i in range(27):
-                rect = self.sky.get_rect()
-                rect.x, rect.y = 16 * i, 16 * j
-                pygame.display.get_surface().blit(self.sky, rect)
+                self.draw(self.sky, 16 * i ,16 * j)
     
     def drawMountain(self):
-        rect = self.mountain.get_rect()
-        rect.x, rect.y = 0, 188 
-        pygame.display.get_surface().blit(self.mountain, rect)
+        self.draw(self.mountain, 0, 188)
 
     def drawGround(self):
         # ground red
         for i in range(27):
-            rect = self.ground_red.get_rect()
-            rect.x, rect.y = 16 *i, 248
-            pygame.display.get_surface().blit(self.ground_red, rect)
+            self.draw(self.ground_red, 16 * i, 248)
        
         # ground line
         for i in range(26):
-            rect = self.ground_line.get_rect()
-            rect.x, rect.y = 16 *i, 264
-            pygame.display.get_surface().blit(self.ground_line, rect)
+            self.draw(self.ground_line, 16 * i, 264)
 
-        rect = self.ground_line_left.get_rect()
-        rect.x, rect.y = 0, 264
-        pygame.display.get_surface().blit(self.ground_line_left, rect)
+        self.draw(self.ground_line_left, 0, 264)
 
-        rect = self.ground_line_right.get_rect()
-        rect.x, rect.y = 432-16, 264
-        pygame.display.get_surface().blit(self.ground_line_right, rect)
+        self.draw(self.ground_line_right, 432 - 16, 264)
 
         # ground yellow
         for j in range(2):
             for i in range(27):
-                rect = self.ground_yellow.get_rect()
-                rect.x, rect.y = 16 *i, 280 + 16 * j
-                pygame.display.get_surface().blit(self.ground_yellow, rect)
+                self.draw(self.ground_yellow, 16 *i, 280 + 16 * j)
 
     def drawPillar(self): 
         self.draw(self.pillar_top, 213, 176)
