@@ -174,14 +174,20 @@ class BackgroundSprite(pygame.sprite.Sprite):
 
     def update(self):
         self.drawSky()
+        self.drawMountain()
     
     def drawSky(self):
         for j in range(12):
             for i in range(27):
                 rect = self.sky.get_rect()
-                rect.x = 16 * i
-                rect.y = 16 * j
+                rect.x, rect.y = 16 * i, 16 * j
                 pygame.display.get_surface().blit(self.sky, rect)
+    
+    def drawMountain(self):
+        rect = self.mountain.get_rect()
+        rect.x, rect.y = 0, 188 
+        pygame.display.get_surface().blit(self.mountain, rect)
+
 
 
 
