@@ -178,6 +178,7 @@ class BackgroundSprite(pygame.sprite.Sprite):
         self.drawSky()
         self.drawMountain()
         self.drawGround()
+        self.drawPillar()
     
     def drawSky(self):
         for j in range(12):
@@ -219,6 +220,16 @@ class BackgroundSprite(pygame.sprite.Sprite):
                 rect.x, rect.y = 16 *i, 280 + 16 * j
                 pygame.display.get_surface().blit(self.ground_yellow, rect)
 
+    def drawPillar(self): 
+        self.draw(self.pillar_top, 213, 176)
+
+        for i in range(12):
+            self.draw(self.pillar, 213, 184 + 8 * i)
+
+    def draw(self, surface, x, y):
+        rect = surface.get_rect()
+        rect.x, rect.y = x, y 
+        pygame.display.get_surface().blit(surface, rect)
 
 
 
