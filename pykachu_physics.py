@@ -25,7 +25,12 @@ class PikaPhysics:
     def runEngineForNextFrame(self, userInputArray):
         isBallTouchingGround = physicsEngine(self.player1, self.player2, self.ball, userInputArray)
         return isBallTouchingGround
-    
+
+    def reset(self, isPlayer2Serve = False):
+        self.player1.initializeForNewRound()
+        self.player2.initializeForNewRound()
+        self.ball.initializeForNewRound(isPlayer2Serve)
+
 class PikaUserInput:
     def __init__(self, action = None):
         if action is None:
@@ -153,6 +158,7 @@ def physicsEngine(player1, player2, ball, userInputArray):
                     player.state
                 )
             player.isCollisionWithBallHappened = True
+            print("collision")
         else:
             player.isCollisionWithBallHappened = False
                 
@@ -160,7 +166,7 @@ def physicsEngine(player1, player2, ball, userInputArray):
     
 
 def isCollisionBetweenBallAndPlayerHappened(ball, playerX, playerY):
-    diff = ball.x = playerX
+    diff = ball.x - playerX
     if (abs(diff) <= PLAYER_HALF_LENGTH):
         diff = ball.y - playerY
         if (abs(diff) <= PLAYER_HALF_LENGTH):

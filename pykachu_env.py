@@ -112,8 +112,12 @@ class PykachuEnv(gym.Env):
             pygame.display.update()
             self.clock.tick(25)
 
-    def reset(self, seed):
+    def reset(self, seed = None):
         super().reset(seed = seed)
+        self.physics.reset()
+
+        if self.render_mode is not None:
+            self.render()
 
         return self.observation
     
