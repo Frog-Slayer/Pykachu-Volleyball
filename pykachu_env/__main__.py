@@ -1,10 +1,8 @@
 import gymnasium as gym
 import numpy as np
-from gymnasium.utils.play import play
+from pykachu_volleyball_env import PykachuEnv
 
-import pykachu_env
-
-env = pykachu_env.PykachuEnv(False, False)
+env = PykachuEnv(False, True)
 env.render_mode = 'human'
 
 for episode in range(2):

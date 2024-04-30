@@ -31,7 +31,7 @@ class PikaPhysics:
         self.player2.initializeForNewRound()
         self.ball.initializeForNewRound(isPlayer2Serve)
 
-class PikaUserInput:
+class UserInput:
     def __init__(self, action = None):
         if action is None:
             self.xDirection = 0
@@ -417,7 +417,7 @@ def letComputerDecideUserInput(player, ball, theOtherPlayer, userInput):
             ):
             virtualExpectedLandingPointX = leftBoundary + int(GROUND_HALF_WIDTH / 2)
     
-    if (abs(virtualExpectedLandingPointX = player.x) > player.computerBoldness + 8):
+    if (abs(virtualExpectedLandingPointX - player.x) > player.computerBoldness + 8):
         if (player.x < virtualExpectedLandingPointX):
             userInput.xDirection = 1
         else:

@@ -3,14 +3,14 @@ import numpy as np
 import pygame
 
 from gymnasium.spaces import MultiDiscrete, Box
-import pykachu_physics
+import physics
 
 from constants import (
     GROUND_HEIGHT, GROUND_WIDTH, GROUND_HALF_WIDTH
 )
 
-from pykachu_render import GameViewDrawer, Texture
-from pykachu_physics import PikaPhysics
+from render import GameViewDrawer, Texture
+from physics import PikaPhysics
 
 """
 RL environment for 'single' agent. The opponent is the basic AI, originally implemented in the game.
@@ -69,8 +69,8 @@ class PykachuEnv(gym.Env):
         }
 
     def step(self, action):
-        userInput = pykachu_physics.PikaUserInput(action)
-        cpuInput = pykachu_physics.PikaUserInput()
+        userInput = physics.UserInput(action)
+        cpuInput = physics.UserInput()
 
         isBallTouchingGround = self.physics.runEngineForNextFrame([userInput, cpuInput])
         terminated = False 

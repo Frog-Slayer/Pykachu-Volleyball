@@ -1,8 +1,7 @@
 import pygame
 import json
-from PIL import Image
 
-ASSETS_PATH = 'assets'
+ASSETS_PATH = 'pykachu_env/assets'
 IMAGE_PATH = ASSETS_PATH + '/images'
 SOUND_PATH = ASSETS_PATH + '/sounds'
 
