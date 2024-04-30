@@ -146,6 +146,45 @@ class PlayerAnimatedSprite(pygame.sprite.Sprite):
         else:
             self.index = 18 + 5 * (state - 5) + frameNumber
 
+class BackgroundSprite(pygame.sprite.Sprite):
+
+    def __init__(self, texture):
+            super(BackgroundSprite, self).__init__()
+            self.texture = texture
+
+            # Sky
+            self.sky = self.texture.getCroppedImage(self.texture.SKY_BLUE)
+
+            # Mountain
+            self.mountain = self.texture.getCroppedImage(self.texture.MOUNTAIN)
+
+            # Ground Red
+            self.ground_red = self.texture.getCroppedImage(self.texture.GROUND_RED)
+
+            # Ground Line
+            self.ground_line = self.texture.getCroppedImage(self.texture.GROUND_LINE)
+
+            # Ground Yellow
+            self.ground_yellow = self.texture.getCroppedImage(self.texture.GROUND_LINE) 
+
+            # Net Pillar
+            self.pillar_top = self.texture.getCroppedImage(self.texture.NET_PILLAR_TOP) 
+            self.pillar = self.texture.getCroppedImage(self.texture.NET_PILLAR) 
+
+
+    def update(self):
+        self.drawSky()
+    
+    def drawSky(self):
+        for j in range(12):
+            for i in range(27):
+                rect = self.sky.get_rect()
+                rect.x = 16 * i
+                rect.y = 16 * j
+                pygame.display.get_surface().blit(self.sky, rect)
+
+
+
 
 class SpriteWithAnchor(pygame.sprite.Sprite):
 
@@ -165,6 +204,8 @@ class GameViewDrawer:
     
     def __init__(self, texture):
         self.texture = texture
+
+        self.background = BackgroundSprite(texture)
 
         self.player1 = PlayerAnimatedSprite((0, 0), texture)
         self.player2 = PlayerAnimatedSprite((0, 0), texture)
@@ -220,3 +261,5 @@ class GameViewDrawer:
 
         print(self.ball.position)
 
+    def drawBackground(self):
+        self.background.update()
