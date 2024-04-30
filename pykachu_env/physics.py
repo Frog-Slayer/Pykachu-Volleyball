@@ -331,9 +331,9 @@ def processGameEndFrameFor(player):
 
 def processCollisionBetweenBallAndPlayer(ball, playerX, userInput, playerState):
     if (ball.x < playerX):
-        ball.xVelocity = -int(abs(ball.x - playerX) / 3)
+        ball.xVelocity = -(abs(ball.x - playerX) // 3)
     elif (ball.x > playerX):
-        ball.xVelocity = int(abs(ball.x - playerX) / 3)
+        ball.xVelocity = abs(ball.x - playerX) // 3
     
     if (ball.xVelocity == 0):
         ball.xVelocity = (rand() % 3) - 1
@@ -409,21 +409,24 @@ def letComputerDecideUserInput(player, ball, theOtherPlayer, userInput):
     if (abs(ball.x - player.x) > 100 and \
         abs(ball.xVelocity) < player.computerBoldness + 5):
 
-        leftBoundary    =   (player.isPlayer2) * GROUND_HALF_WIDTH      
+        leftBoundary = (player.isPlayer2) * GROUND_HALF_WIDTH      
 
+        # computer wants to go to the middle of its side
         if ball.expectedLandingPointX <= leftBoundary or\
-            (ball.expectedLandingPointX >= (player.isPlayer2) * GROUND_WIDTH + GROUND_HALF_WIDTH and\
+            (ball.expectedLandingPointX >= player.isPlayer2 * GROUND_WIDTH + GROUND_HALF_WIDTH and\
             player.computerWhereToStandBy == 0):
             virtualExpectedLandingPointX = leftBoundary + GROUND_HALF_WIDTH // 2
     
+    # set x direction
     if abs(virtualExpectedLandingPointX - player.x) > player.computerBoldness + 8:
         if (player.x < virtualExpectedLandingPointX):
             userInput.xDirection = 1
         else:
             userInput.xDirection = -1
-    elif (rand() % 20 == 0):
+    elif rand() % 20 == 0:
         player.computerWhereToStandBy = rand() % 2
         
+    # if computer is on the ground
     if player.state == 0:
         if (abs(ball.xVelocity) < player.computerBoldness + 3   and\
             abs(ball.x - player.x) < PLAYER_HALF_LENGTH         and\
@@ -435,6 +438,7 @@ def letComputerDecideUserInput(player, ball, theOtherPlayer, userInput):
         leftBoundary = player.isPlayer2 * GROUND_HALF_WIDTH
         rightBoundary = (player.isPlayer2 + 1) * GROUND_HALF_WIDTH
         
+        #dive
         if (ball.expectedLandingPointX > leftBoundary                               and\
             ball.expectedLandingPointX < rightBoundary                              and\
             abs(ball.x - player.x) > player.computerBoldness * 5 + PLAYER_LENGTH    and\
@@ -474,7 +478,7 @@ def decideWhetherInputPowerHit(player, ball, theOtherPlayer, userInput):
                     return True
     else:
         for xDirection in range(1, -1, -1):
-            for yDirection in range(1, -2):
+            for yDirection in range(1, -2, -1):
                 expectedLandingPointX = expectedLandingPointXWhenPowerHit(xDirection, yDirection, ball)
                 if ((expectedLandingPointX <= player.isPlayer2 * GROUND_HALF_WIDTH or\
                     expectedLandingPointX >= player.isPlayer2 * GROUND_WIDTH + GROUND_HALF_WIDTH) and\
@@ -497,9 +501,9 @@ def expectedLandingPointXWhenPowerHit(userInputXDirection, userInputYDirection, 
     loopCounter = 0
     while (True):
         loopCounter += 1
-        
         futureCopyBallX = copyBall.x + copyBall.xVelocity
 
+        # side bounce
         if (futureCopyBallX < BALL_RADIUS or futureCopyBallX > GROUND_WIDTH):
             copyBall.xVelocity = -copyBall.xVelocity
 

@@ -103,32 +103,31 @@ class BallAnimatedSprite(pygame.sprite.Sprite):
     def set_position(self, x, y):
         self.position = (x, y)
 
-
 class PlayerAnimatedSprite(pygame.sprite.Sprite):
     def __init__(self, position, texture):
-            super(PlayerAnimatedSprite, self).__init__()
-            self.texture = texture
+        super(PlayerAnimatedSprite, self).__init__()
+        self.texture = texture
 
-            images = []
-            path_array = []
-            for i in range(7):
-                if i == 3:
-                    path_array.append(Texture.getPikachuTexture(i, 0))
-                    path_array.append(Texture.getPikachuTexture(i, 1))
-                elif i == 4:
-                    path_array.append(Texture.getPikachuTexture(i, 0))
-                else:
-                    for j in range(5):
-                        path_array.append(Texture.getPikachuTexture(i, j))
-            
-            for _ in path_array:
-                images.append(self.texture.getCroppedImage(_))
+        images = []
+        path_array = []
+        for i in range(7):
+            if i == 3:
+                path_array.append(Texture.getPikachuTexture(i, 0))
+                path_array.append(Texture.getPikachuTexture(i, 1))
+            elif i == 4:
+                path_array.append(Texture.getPikachuTexture(i, 0))
+            else:
+                for j in range(5):
+                    path_array.append(Texture.getPikachuTexture(i, j))
+        
+        for _ in path_array:
+            images.append(self.texture.getCroppedImage(_))
 
-            self.images = images
-            self.index = 0
-            self.image = self.images[self.index]
-            self.position = position
-            self.scale = Scale(1, 1) 
+        self.images = images
+        self.index = 0
+        self.image = self.images[self.index]
+        self.position = position
+        self.scale = Scale(1, 1) 
 
     def update(self):
         self.image = pygame.transform.flip(self.images[self.index], True if self.scale.x == -1 else False, False)
@@ -217,19 +216,23 @@ class BackgroundSprite(pygame.sprite.Sprite):
         rect.x, rect.y = x, y 
         pygame.display.get_surface().blit(surface, rect)
 
-class SpriteWithAnchor(pygame.sprite.Sprite):
+class SingleSprite(pygame.sprite.Sprite):
 
     def __init__(self, path, position, texture):
         self.position = position
         self.texture = texture
         self.image = self.texture.getCroppedImage(path) 
-        self.scale = Scale(1, 1) 
+
+        w = self.image.get_rect().w
+        h = self.image.get_rect().h
+        self.scale = Scale(w, h) 
+        self.visible = False
 
     def update(self):
-        self.image = pygame.transform.flip(self.image, True if self.scale.x == -1 else False, False)
-        self.rect = self.image.get_rect()
-        self.rect.center = self.position
-        pygame.display.get_surface().blit(self.image, self.rect)
+        image = pygame.transform.scale(self.image, (self.scale.x, self.scale.y))
+        rect = image.get_rect()
+        rect.center = self.position
+        pygame.display.get_surface().blit(image, rect)
 
 class GameViewDrawer:
     
@@ -237,13 +240,12 @@ class GameViewDrawer:
         self.texture = texture
 
         self.background = BackgroundSprite(texture)
-
         self.player1 = PlayerAnimatedSprite((0, 0), texture)
         self.player2 = PlayerAnimatedSprite((0, 0), texture)
         self.ball = BallAnimatedSprite((0, 0), texture)
-        self.ballTrail = SpriteWithAnchor(self.texture.BALL_TRAIL, (0, 0), texture)
-        self.ballHyper = SpriteWithAnchor(self.texture.BALL_HYPER, (0, 0), texture)
-        self.punch = SpriteWithAnchor(self.texture.BALL_PUNCH, (0, 0), texture)
+        self.ballTrail = SingleSprite(self.texture.BALL_TRAIL, (0, 0), texture)
+        self.ballHyper = SingleSprite(self.texture.BALL_HYPER, (0, 0), texture)
+        self.punch = SingleSprite(self.texture.BALL_PUNCH, (0, 0), texture)
     
     def draw_players_and_ball(self, physics):
         player1 = physics.player1
@@ -270,7 +272,7 @@ class GameViewDrawer:
 
         if ball.punchEffectRadius > 0:
             ball.punchEffectRadius -= 2
-            self.punch.scale= (2 * ball.punchEffectRadius, 2 * ball.punchEffectRadius)
+            self.punch.scale = Scale(2 * ball.punchEffectRadius, 2 * ball.punchEffectRadius)
             self.punch.position = (ball.punchEffectX, ball.punchEffectY)
             self.punch.visible = True
         else:
@@ -286,9 +288,19 @@ class GameViewDrawer:
             self.ballHyper.visible = False
             self.ballTrail.visible = False
 
-        self.ball.update()
         self.player1.update()
         self.player2.update()
 
+        if self.ballTrail.visible:
+            self.ballTrail.update()
+    
+        if self.ballHyper.visible:
+            self.ballHyper.update()
+ 
+        self.ball.update()
+
+        if self.punch.visible:
+            self.punch.update()
+ 
     def drawBackground(self):
         self.background.update()

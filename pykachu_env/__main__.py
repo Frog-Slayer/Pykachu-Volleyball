@@ -7,7 +7,7 @@ env.render_mode = 'human'
 
 isPlayer2Serve = False
 
-for episode in range(3):
+for episode in range(4):
     env.reset(isPlayer2Serve = isPlayer2Serve)
 
     while True:
