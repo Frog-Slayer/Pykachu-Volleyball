@@ -1,5 +1,4 @@
 import random as random
-import math
 
 from constants import (
     GROUND_WIDTH,
@@ -15,128 +14,126 @@ from constants import (
     INFINITE_LOOP_LIMIT
 )
 
-class PikaPhysics:
+class PykaPhysics:
     def __init__(self):
-        self.player1 = Player(isPlayer2= False, isComputer=True)
-        self.player2 = Player(isPlayer2= True, isComputer=True)
+        self.player1 = Player(is_player_2= False, is_computer=True)
+        self.player2 = Player(is_player_2= True, is_computer=True)
         self.ball = Ball(False)
         return
     
-    def runEngineForNextFrame(self, userInputArray):
-        isBallTouchingGround = physicsEngine(self.player1, self.player2, self.ball, userInputArray)
-        return isBallTouchingGround
+    def run_engine(self, user_inputs):
+        is_ball_touching_ground = physics_engine(self.player1, self.player2, self.ball, user_inputs)
+        return is_ball_touching_ground
 
-    def reset(self, isPlayer2Serve = False):
-        self.player1.initializeForNewRound()
-        self.player2.initializeForNewRound()
-        self.ball.initializeForNewRound(isPlayer2Serve)
+    def reset(self, is_player_2_serve = False):
+        self.player1.init_new_round()
+        self.player2.init_new_round()
+        self.ball.init_new_round(is_player_2_serve)
 
 class UserInput:
     def __init__(self, action = None):
         if action is None:
-            self.xDirection = 0
-            self.yDirection = 0
-            self.powerHit = 0
+            self.x_direction = 0
+            self.y_direction = 0
+            self.power_hit = 0
         else : 
-            self.yDirection = action[0]
-            self.xDirection = action[1]
-            self.powerHit   = action[2]
+            self.y_direction = action[0]
+            self.x_direction = action[1]
+            self.power_hit   = action[2]
         return
     
 class Player:
-    def __init__(self, isPlayer2, isComputer):
-        self.isPlayer2  = isPlayer2
-        self.isComputer = isComputer
-        self.initializeForNewRound()
+    def __init__(self, is_player_2, is_computer):
+        self.is_player_2  = is_player_2
+        self.is_computer = is_computer
+        self.init_new_round()
         
-        self.divingDirection        = 0
-        self.lyingDownDurationLeft  = -1
-        self.isWingger              = False
-        self.gameEnded              = False
-        self.computerWhereToStandBy = 0
+        self.dive_direction        = 0
+        self.lying_down_duration_left  = -1
+        self.computer_stand_by_pos = 0
         
         #self.sound
         return
     
-    def initializeForNewRound(self):
+    def init_new_round(self):
 
         self.x = 3
-        if (self.isPlayer2):
+        if (self.is_player_2):
             self.x = GROUND_WIDTH - 36
         
         self.y = PLAYER_TOUCHING_GROUND_Y_COORD
-        self.yVelocity = 0
-        self.isCollisionWithBallHappened = False
+        self.y_velocity = 0
+        self.is_ball_collision_happened = False
         
         """
         Player's state
         0: idle, 1: jumping, 2: jump and power hit, 3: diving, 4: lying down after diving
         """
         self.state = 0 
-        self.frameNumber = 0
-        self.normalStatusArmSwingDirection  = 1
-        self.delayBeforeNextFrame = 0
+        self.frame_num = 0
+        self.normal_status_arm_swing_direction  = 1
+        self.next_frame_delay = 0
         
-        self.computerBoldness = rand() % 5
+        self.computer_boldness = rand() % 5
         return
     
 class Ball:
-    def __init__(self, isPlayer2Serve):
-        self.initializeForNewRound(isPlayer2Serve)
-        self.expectedLandingPointX = 0
+    def __init__(self, is_player_2_serve):
+        self.init_new_round(is_player_2_serve)
+        self.expected_landing_x = 0
         self.rotation       = 0
-        self.fineRotation   = 0
-        self.punchEffectX   = 0
-        self.punchEffectY   = 0
+        self.fine_rotation   = 0
+        self.punch_effect_x   = 0
+        self.punch_effect_y   = 0
 
         # for ball trail
-        self.previousX      = 0
-        self.previousPreviousX = 0
-        self.previousY      = 0
-        self.previousPreviousY = 0
+        self.previous_x      = 0
+        self.pre_previous_x = 0
+        self.previous_y      = 0
+        self.pre_previous_y = 0
         
         #self.sound 
         return
 
-    def initializeForNewRound(self, isPlayer2Serve):
+    def init_new_round(self, is_player_2_serve):
         self.x = 56
-        if (isPlayer2Serve):
+        if (is_player_2_serve):
             self.x = GROUND_WIDTH - 56
         
         self.y = 0
-        self.xVelocity = 0
-        self.yVelocity = 0
-        self.punchEffectRadius = 0
-        self.isPowerHit = False    
+        self.x_velocity = 0
+        self.y_velocity = 0
+        self.punch_effect_radius = 0
+        self.is_power_hit = False    
         return
 
 class CopyBall:
-    def __init__(self, x, y, xVelocity, yVelocity):
+    def __init__(self, x, y, x_velocity, y_velocity):
         self.x = x
         self.y = y
-        self.xVelocity = xVelocity
-        self.yVelocity = yVelocity
+        self.x_velocity = x_velocity
+        self.y_velocity = y_velocity
 
 def rand():
     return int(32768 * random.random())
 
-def physicsEngine(player1, player2, ball, userInputArray):
-    isBallTouchingGround = processCollisionBetweenBallAndWorldAndSetBallPosition(ball)
+def physics_engine(player1, player2, ball, user_inputs):
+    is_ball_touching_ground = process_ball_world_collision(ball)
 
     for i in range(2):
         if (i == 0):
             player = player1
-            theOtherPlayer = player2
+            other = player2
         else:
             player = player2
-            theOtherPlayer = player1
+            other = player1
     
-        calculateExpectedLandingPointXFor(ball)
+        calculate_expected_landing_x(ball)
     
-        processPlayerMovementAndSetPlayerPosition(
+        process_player_movement(
             player,
-            userInputArray[i],
-            theOtherPlayer,
+            user_inputs[i],
+            other,
             ball
         )
     
@@ -146,28 +143,28 @@ def physicsEngine(player1, player2, ball, userInputArray):
         else:
             player = player2
         
-        isHappened = isCollisionBetweenBallAndPlayerHappened(
+        is_happened = check_ball_player_collision(
             ball,
             player.x,
             player.y
         )
         
-        if (isHappened):
-            if (player.isCollisionWithBallHappened == False):
-                processCollisionBetweenBallAndPlayer(
+        if (is_happened):
+            if (player.is_ball_collision_happened == False):
+                process_ball_player_collision(
                     ball,
                     player.x,
-                    userInputArray[i],
+                    user_inputs[i],
                     player.state
                 )
-            player.isCollisionWithBallHappened = True
+            player.is_ball_collision_happened = True
         else:
-            player.isCollisionWithBallHappened = False
+            player.is_ball_collision_happened = False
                 
-    return isBallTouchingGround
+    return is_ball_touching_ground
     
 
-def isCollisionBetweenBallAndPlayerHappened(ball, playerX, playerY):
+def check_ball_player_collision(ball, playerX, playerY):
     diff = ball.x - playerX
     if (abs(diff) <= PLAYER_HALF_LENGTH):
         diff = ball.y - playerY
@@ -175,356 +172,338 @@ def isCollisionBetweenBallAndPlayerHappened(ball, playerX, playerY):
         
     return False
         
-def processCollisionBetweenBallAndWorldAndSetBallPosition(ball):
-    ball.previousPreviousX  = ball.previousX
-    ball.previousPreviousY  = ball.previousY
-    ball.previousX          = ball.x
-    ball.previousY          = ball.y
+def process_ball_world_collision(ball):
+    ball.pre_previous_x = ball.previous_x
+    ball.pre_previous_y = ball.previous_y
+    ball.previous_x = ball.x
+    ball.previous_y = ball.y
         
-    futureFineRotation = ball.fineRotation + int(ball.xVelocity / 2)
+    future_fine_rotation = ball.fine_rotation + ball.x_velocity // 2
 
-    if (futureFineRotation < 0):
-        futureFineRotation += 50
-    elif (futureFineRotation > 50):
-        futureFineRotation -= 50
+    if future_fine_rotation < 0:
+        future_fine_rotation += 50
+    elif future_fine_rotation > 50:
+        future_fine_rotation -= 50
         
-    ball.fineRotation       = futureFineRotation
-    ball.rotation           = int(ball.fineRotation / 10)
+    ball.fine_rotation       = future_fine_rotation
+    ball.rotation           = ball.fine_rotation // 10
 
-    futureBallX             = ball.x + ball.xVelocity
-    if (futureBallX < BALL_RADIUS or futureBallX > GROUND_WIDTH):
-        ball.xVelocity      = -ball.xVelocity
+    future_ball_x             = ball.x + ball.x_velocity
+    if future_ball_x < BALL_RADIUS or future_ball_x > GROUND_WIDTH:
+        ball.x_velocity      = -ball.x_velocity
         
-    futureBallY             = ball.y + ball.yVelocity
-    if (futureBallY < 0):
-        ball.yVelocity      = 1
+    future_ball_y             = ball.y + ball.y_velocity
+    if (future_ball_y < 0):
+        ball.y_velocity      = 1
         
-    if (abs(ball.x - GROUND_HALF_WIDTH) < NET_PILLAR_HALF_WIDTH and \
-        ball.y > NET_PILLAR_TOP_TOP_Y_COORD):
-        if (ball.y <= NET_PILLAR_TOP_BOTTOM_Y_COORD):
-            if (ball.yVelocity > 0):
-                ball.yVelocity = -ball.yVelocity
+    if abs(ball.x - GROUND_HALF_WIDTH) < NET_PILLAR_HALF_WIDTH and \
+        ball.y > NET_PILLAR_TOP_TOP_Y_COORD:
+        if ball.y <= NET_PILLAR_TOP_BOTTOM_Y_COORD:
+            if ball.y_velocity > 0:
+                ball.y_velocity = -ball.y_velocity
         else:
-            if (ball.x < GROUND_HALF_WIDTH):
-                ball.xVelocity = -abs(ball.xVelocity)
+            if ball.x < GROUND_HALF_WIDTH:
+                ball.x_velocity = -abs(ball.x_velocity)
             else:
-                ball.xVelocity = abs(ball.xVelocity)
+                ball.x_velocity = abs(ball.x_velocity)
                     
                 
-    futureBallY = ball.y + ball.yVelocity
-    if (futureBallY > BALL_TOUCHING_GROUND_Y_COORD):
-        #ball.sound.ballTouchesGround    = True
-        ball.yVelocity                  = -ball.yVelocity
-        ball.punchEffectX               = ball.x
-        ball.y                          = BALL_TOUCHING_GROUND_Y_COORD
-        ball.punchEffectRadius          = BALL_RADIUS
-        ball.punchEffectY               = BALL_TOUCHING_GROUND_Y_COORD + BALL_RADIUS
+    future_ball_y = ball.y + ball.y_velocity
+    if future_ball_y > BALL_TOUCHING_GROUND_Y_COORD:
+        #ball.sound.ballTouchesGround = True
+        ball.y_velocity = -ball.y_velocity
+        ball.punch_effect_x = ball.x
+        ball.y = BALL_TOUCHING_GROUND_Y_COORD
+        ball.punch_effect_radius = BALL_RADIUS
+        ball.punch_effect_y = BALL_TOUCHING_GROUND_Y_COORD + BALL_RADIUS
         return True
     
-    ball.y          = futureBallY
-    ball.x          = ball.x + ball.xVelocity
-    ball.yVelocity  += 1
+    ball.y = future_ball_y
+    ball.x = ball.x + ball.x_velocity
+    ball.y_velocity += 1
     
     return False
 
-def processPlayerMovementAndSetPlayerPosition(player, userInput, theOtherPlayer, ball):
-    if (player.isComputer):
-        letComputerDecideUserInput(player, ball, theOtherPlayer, userInput)
+def process_player_movement(player, user_input, other, ball):
+    if (player.is_computer):
+        let_computer_decide_user_input(player, ball, other, user_input)
     
     if (player.state == 4): #diving
-        player.lyingDownDurationLeft += -1
-        if (player.lyingDownDurationLeft < -1):
+        player.lying_down_duration_left += -1
+        if (player.lying_down_duration_left < -1):
             player.state = 0
         return
     
-    playerVelocityX = 0
+    player_x_velocity = 0
     if (player.state < 5):
         if (player.state < 3):
-            playerVelocityX = userInput.xDirection * 6
+            player_x_velocity = user_input.x_direction * 6
         else: # diving
-            playerVelocityX = player.divingDirection * 8
+            player_x_velocity = player.dive_direction * 8
             
-    futurePlayerX = player.x + playerVelocityX
-    player.x = futurePlayerX
+    future_player_x = player.x + player_x_velocity
+    player.x = future_player_x
     
-    if (player.isPlayer2 == False):
-        if (futurePlayerX < PLAYER_HALF_LENGTH):
+    if (player.is_player_2 == False):
+        if (future_player_x < PLAYER_HALF_LENGTH):
             player.x = PLAYER_HALF_LENGTH
-        elif (futurePlayerX > GROUND_HALF_WIDTH - PLAYER_HALF_LENGTH):
+        elif (future_player_x > GROUND_HALF_WIDTH - PLAYER_HALF_LENGTH):
             player.x = GROUND_HALF_WIDTH - PLAYER_HALF_LENGTH
     else:
-        if (futurePlayerX < GROUND_HALF_WIDTH + PLAYER_HALF_LENGTH):
+        if (future_player_x < GROUND_HALF_WIDTH + PLAYER_HALF_LENGTH):
             player.x = GROUND_HALF_WIDTH + PLAYER_HALF_LENGTH
-        elif (futurePlayerX > GROUND_WIDTH - PLAYER_HALF_LENGTH):
+        elif (future_player_x > GROUND_WIDTH - PLAYER_HALF_LENGTH):
             player.x = GROUND_WIDTH - PLAYER_HALF_LENGTH
     
-    if (player.state < 3 and userInput.yDirection == -1 and player.y == PLAYER_TOUCHING_GROUND_Y_COORD):
-        player.yVelocity    = -16
+    if (player.state < 3 and user_input.y_direction == -1 and player.y == PLAYER_TOUCHING_GROUND_Y_COORD):
+        player.y_velocity    = -16
         player.state        = 1
-        player.frameNumber  = 0
+        player.frame_num  = 0
         #player.sound.chu   = True
         
-    futurePlayerY   = player.y + player.yVelocity
-    player.y        = futurePlayerY
+    future_player_y   = player.y + player.y_velocity
+    player.y        = future_player_y
 
-    if (futurePlayerY < PLAYER_TOUCHING_GROUND_Y_COORD):
-        player.yVelocity    += 1
-    elif (futurePlayerY > PLAYER_TOUCHING_GROUND_Y_COORD):
-        player.yVelocity    = 0
+    if (future_player_y < PLAYER_TOUCHING_GROUND_Y_COORD):
+        player.y_velocity    += 1
+    elif (future_player_y > PLAYER_TOUCHING_GROUND_Y_COORD):
+        player.y_velocity    = 0
         player.y            = PLAYER_TOUCHING_GROUND_Y_COORD
-        player.frameNumber  = 0
+        player.frame_num  = 0
         if (player.state == 3):
             player.state    = 4
-            player.frameNumber = 0
-            player.lyingDownDurationLeft = 3
+            player.frame_num = 0
+            player.lying_down_duration_left = 3
         else:
             player.state    = 0
             
-    if (userInput.powerHit == 1):
+    if (user_input.power_hit == 1):
         if (player.state == 1):
-            player.delayBeforeNextFrame = 5
-            player.frameNumber  = 0
+            player.next_frame_delay = 5
+            player.frame_num  = 0
             player.state        = 2
             #player.sound.pika = True
-        elif (player.state == 0 and userInput.xDirection != 0): # dive
+        elif (player.state == 0 and user_input.x_direction != 0): # dive
             player.state        = 3
-            player.frameNumber  = 0
-            player.divingDirection = userInput.xDirection
-            player.yVelocity    = -5
+            player.frame_num  = 0
+            player.dive_direction = user_input.x_direction
+            player.y_velocity    = -5
             #player.sound.chu   = True
             
     if (player.state == 1):
-        player.frameNumber = (player.frameNumber + 1) % 3
+        player.frame_num = (player.frame_num + 1) % 3
     elif (player.state == 2):
-        if (player.delayBeforeNextFrame < 1):
-            player.frameNumber += 1
-            if (player.frameNumber > 4):
-                player.frameNumber = 0
+        if (player.next_frame_delay < 1):
+            player.frame_num += 1
+            if (player.frame_num > 4):
+                player.frame_num = 0
                 player.state = 1
         else:
-            player.delayBeforeNextFrame -= 1
+            player.next_frame_delay -= 1
     elif (player.state == 0):
-        player.delayBeforeNextFrame += 1
-        if (player.delayBeforeNextFrame > 3):
-            player.delayBeforeNextFrame = 0
-            futureFrameNumber = player.frameNumber + player.normalStatusArmSwingDirection
-            if (futureFrameNumber < 0 or futureFrameNumber > 4):
-                player.normalStatusArmSwingDirection = -player.normalStatusArmSwingDirection
-            player.frameNumber = player.frameNumber + player.normalStatusArmSwingDirection
+        player.next_frame_delay += 1
+        if (player.next_frame_delay > 3):
+            player.next_frame_delay = 0
+            futureframe_num = player.frame_num + player.normal_status_arm_swing_direction
+            if (futureframe_num < 0 or futureframe_num > 4):
+                player.normal_status_arm_swing_direction = -player.normal_status_arm_swing_direction
+            player.frame_num = player.frame_num + player.normal_status_arm_swing_direction
     
-    if (player.gameEnded == True):
-        if (player.state == 0):
-            if (player.isWinner == True):
-                player.state = 5
-                #player.sound.pipikachu = True
-            else:
-                player.state = 6
-            player.delayBeforeNExtFrame = 0
-            player.frameNumber = 0
-        processGameEndFrameFor(player)    
     return
         
-def processGameEndFrameFor(player):
-    if (player.gameEnded == True and player.frameNumber < 4):
-        player.delayBeforeNextFrame += 1
-        if (player.delayBeforeNextFrame > 4):
-            player.delayBeforeNextFrame = 0
-            player.frameNumber += 1  
-    return
 
-
-def processCollisionBetweenBallAndPlayer(ball, playerX, userInput, playerState):
+def process_ball_player_collision(ball, playerX, user_input, playerState):
     if (ball.x < playerX):
-        ball.xVelocity = -(abs(ball.x - playerX) // 3)
+        ball.x_velocity = -(abs(ball.x - playerX) // 3)
     elif (ball.x > playerX):
-        ball.xVelocity = abs(ball.x - playerX) // 3
+        ball.x_velocity = abs(ball.x - playerX) // 3
     
-    if (ball.xVelocity == 0):
-        ball.xVelocity = (rand() % 3) - 1
+    if (ball.x_velocity == 0):
+        ball.x_velocity = (rand() % 3) - 1
     
-    ballAbsYVelocity = abs(ball.yVelocity)
-    ball.yVelocity = -ballAbsYVelocity
+    ball_abs_yv = abs(ball.y_velocity)
+    ball.y_velocity = -ball_abs_yv
     
-    if (ballAbsYVelocity < 15):
-        ball.yVelocity = -15
+    if (ball_abs_yv < 15):
+        ball.y_velocity = -15
         
     if (playerState == 2):
         if (ball.x < GROUND_HALF_WIDTH):
-            ball.xVelocity = (abs(userInput.xDirection) + 1) * 10
+            ball.x_velocity = (abs(user_input.x_direction) + 1) * 10
         else:
-            ball.xVelocity = -(abs(userInput.xDirection) + 1) * 10
+            ball.x_velocity = -(abs(user_input.x_direction) + 1) * 10
         
-        ball.punchEffectX = ball.x
-        ball.punchEffectY = ball.y
+        ball.punch_effect_x = ball.x
+        ball.punch_effect_y = ball.y
         
-        ball.yVelocity = abs(ball.yVelocity) * userInput.yDirection * 2
-        ball.punchEffectRadius  = BALL_RADIUS
-        #ball.sound.powerHit    = True
-        ball.isPowerHit         = True
+        ball.y_velocity = abs(ball.y_velocity) * user_input.y_direction * 2
+        ball.punch_effect_radius  = BALL_RADIUS
+        #ball.sound.power_hit    = True
+        ball.is_power_hit         = True
     else:
-        ball.isPowerHit         = False
+        ball.is_power_hit         = False
         
-    calculateExpectedLandingPointXFor(ball)
+    calculate_expected_landing_x(ball)
     return
 
-def calculateExpectedLandingPointXFor(ball):
-    copyBall = CopyBall(ball.x, ball.y, ball.xVelocity, ball.yVelocity)
+def calculate_expected_landing_x(ball):
+    copy_ball = CopyBall(ball.x, ball.y, ball.x_velocity, ball.y_velocity)
     
-    loopCounter = 0
+    loop_counter = 0
     while (True):
-        loopCounter += 1
-        futureCopyBallX = copyBall.xVelocity + copyBall.x
+        loop_counter += 1
+        future_copy_ball_x = copy_ball.x_velocity + copy_ball.x
 
-        if futureCopyBallX < BALL_RADIUS or futureCopyBallX > GROUND_WIDTH:
-            copyBall.xVelocity = -copyBall.xVelocity
+        if future_copy_ball_x < BALL_RADIUS or future_copy_ball_x > GROUND_WIDTH:
+            copy_ball.x_velocity = -copy_ball.x_velocity
 
-        if copyBall.y + copyBall.yVelocity < 0:
-            copyBall.yVelocity = 1
+        if copy_ball.y + copy_ball.y_velocity < 0:
+            copy_ball.y_velocity = 1
         
-        if abs(copyBall.x - GROUND_HALF_WIDTH) < NET_PILLAR_HALF_WIDTH and \
-            copyBall.y > NET_PILLAR_TOP_TOP_Y_COORD:
-            if copyBall.y < NET_PILLAR_TOP_BOTTOM_Y_COORD:
-                if copyBall.yVelocity > 0:
-                    copyBall.yVelocity = -copyBall.yVelocity
+        if abs(copy_ball.x - GROUND_HALF_WIDTH) < NET_PILLAR_HALF_WIDTH and \
+            copy_ball.y > NET_PILLAR_TOP_TOP_Y_COORD:
+            if copy_ball.y < NET_PILLAR_TOP_BOTTOM_Y_COORD:
+                if copy_ball.y_velocity > 0:
+                    copy_ball.y_velocity = -copy_ball.y_velocity
             else:
-                if copyBall.x < GROUND_HALF_WIDTH:
-                    copyBall.xVelocity = -abs(copyBall.xVelocity)
+                if copy_ball.x < GROUND_HALF_WIDTH:
+                    copy_ball.x_velocity = -abs(copy_ball.x_velocity)
                 else:
-                    copyBall.xVelocity = abs(copyBall.xVelocity)
+                    copy_ball.x_velocity = abs(copy_ball.x_velocity)
         
-        copyBall.y += copyBall.yVelocity
+        copy_ball.y += copy_ball.y_velocity
         
-        if (copyBall.y > BALL_TOUCHING_GROUND_Y_COORD or \
-            loopCounter >= INFINITE_LOOP_LIMIT):
+        if (copy_ball.y > BALL_TOUCHING_GROUND_Y_COORD or \
+            loop_counter >= INFINITE_LOOP_LIMIT):
             break
         
-        copyBall.x += copyBall.xVelocity
-        copyBall.yVelocity += 1
+        copy_ball.x += copy_ball.x_velocity
+        copy_ball.y_velocity += 1
     
-    ball.expectedLandingPointX = copyBall.x
+    ball.expected_landing_x = copy_ball.x
     return
 
-def letComputerDecideUserInput(player, ball, theOtherPlayer, userInput):
-    userInput.xDirection    = 0
-    userInput.yDirection    = 0
-    userInput.powerHit      = 0
+def let_computer_decide_user_input(player, ball, other, user_input):
+    user_input.x_direction    = 0
+    user_input.y_direction    = 0
+    user_input.power_hit      = 0
     
-    virtualExpectedLandingPointX = ball.expectedLandingPointX
+    expected_landing_x = ball.expected_landing_x
     if (abs(ball.x - player.x) > 100 and \
-        abs(ball.xVelocity) < player.computerBoldness + 5):
+        abs(ball.x_velocity) < player.computer_boldness + 5):
 
-        leftBoundary = (player.isPlayer2) * GROUND_HALF_WIDTH      
+        left_boundary = (player.is_player_2) * GROUND_HALF_WIDTH      
 
         # computer wants to go to the middle of its side
-        if ball.expectedLandingPointX <= leftBoundary or\
-            (ball.expectedLandingPointX >= player.isPlayer2 * GROUND_WIDTH + GROUND_HALF_WIDTH and\
-            player.computerWhereToStandBy == 0):
-            virtualExpectedLandingPointX = leftBoundary + GROUND_HALF_WIDTH // 2
+        if ball.expected_landing_x <= left_boundary or\
+            (ball.expected_landing_x >= player.is_player_2 * GROUND_WIDTH + GROUND_HALF_WIDTH and\
+            player.computer_stand_by_pos == 0):
+            expected_landing_x = left_boundary + GROUND_HALF_WIDTH // 2
     
     # set x direction
-    if abs(virtualExpectedLandingPointX - player.x) > player.computerBoldness + 8:
-        if (player.x < virtualExpectedLandingPointX):
-            userInput.xDirection = 1
+    if abs(expected_landing_x - player.x) > player.computer_boldness + 8:
+        if (player.x < expected_landing_x):
+            user_input.x_direction = 1
         else:
-            userInput.xDirection = -1
+            user_input.x_direction = -1
     elif rand() % 20 == 0:
-        player.computerWhereToStandBy = rand() % 2
+        player.computer_stand_by_pos = rand() % 2
         
     # if computer is on the ground
     if player.state == 0:
-        if (abs(ball.xVelocity) < player.computerBoldness + 3   and\
+        if (abs(ball.x_velocity) < player.computer_boldness + 3   and\
             abs(ball.x - player.x) < PLAYER_HALF_LENGTH         and\
             ball.y > -36                                        and\
-            ball.y < 10 * player.computerBoldness + 84          and\
-            ball.yVelocity > 0):
-            userInput.yDirection = -1
+            ball.y < 10 * player.computer_boldness + 84          and\
+            ball.y_velocity > 0):
+            user_input.y_direction = -1
         
-        leftBoundary = player.isPlayer2 * GROUND_HALF_WIDTH
-        rightBoundary = (player.isPlayer2 + 1) * GROUND_HALF_WIDTH
+        left_boundary = player.is_player_2 * GROUND_HALF_WIDTH
+        right_boundary = (player.is_player_2 + 1) * GROUND_HALF_WIDTH
         
         #dive
-        if (ball.expectedLandingPointX > leftBoundary                               and\
-            ball.expectedLandingPointX < rightBoundary                              and\
-            abs(ball.x - player.x) > player.computerBoldness * 5 + PLAYER_LENGTH    and\
-            ball.x > leftBoundary                                                   and\
-            ball.x < rightBoundary                                                  and\
+        if (ball.expected_landing_x > left_boundary                               and\
+            ball.expected_landing_x < right_boundary                              and\
+            abs(ball.x - player.x) > player.computer_boldness * 5 + PLAYER_LENGTH    and\
+            ball.x > left_boundary                                                   and\
+            ball.x < right_boundary                                                  and\
             ball.y > 174):
-            userInput.powerHit  = 1
+            user_input.power_hit  = 1
             if (player.x < ball.x):
-                userInput.xDirection = 1
+                user_input.x_direction = 1
             else:
-                userInput.xDirection = -1
+                user_input.x_direction = -1
     elif player.state == 1 or player.state == 2:# jumping
         if abs(ball.x - player.x) > 8:
             if player.x < ball.x:
-                userInput.xDirection = 1
+                user_input.x_direction = 1
             else:
-                userInput.xDirection = -1
+                user_input.x_direction = -1
         
         if abs(ball.x - player.x) < 48 and abs(ball.y - player.y) < 48:
-            willInputPowerHit = decideWhetherInputPowerHit(player, ball, theOtherPlayer, userInput)
-            if willInputPowerHit:
-                userInput.powerHit = 1
-                if abs(theOtherPlayer.x - player.x) < 80 and userInput.yDirection != -1:
-                    userInput.yDirection = -1
+            will_power_hit = decide_power_hit(player, ball, other, user_input)
+            if will_power_hit:
+                user_input.power_hit = 1
+                if abs(other.x - player.x) < 80 and user_input.y_direction != -1:
+                    user_input.y_direction = -1
     return                
 
 
-def decideWhetherInputPowerHit(player, ball, theOtherPlayer, userInput):
+def decide_power_hit(player, ball, other, user_input):
     if (rand() % 2 == 0):
-        for xDirection in range(1, -1, -1):
-            for yDirection in range(-1, 2):
-                expectedLandingPointX = expectedLandingPointXWhenPowerHit(xDirection, yDirection, ball)
-                if ((expectedLandingPointX <= player.isPlayer2 * GROUND_HALF_WIDTH or\
-                    expectedLandingPointX >= player.isPlayer2 * GROUND_WIDTH + GROUND_HALF_WIDTH) and\
-                    abs(expectedLandingPointX - theOtherPlayer.x) > PLAYER_LENGTH):
-                    userInput.xDirection = xDirection
-                    userInput.yDIrection = yDirection
+        for x_direction in range(1, -1, -1):
+            for y_direction in range(-1, 2):
+                expected_landing_x = expected_power_hit_landing_x(x_direction, y_direction, ball)
+                if ((expected_landing_x <= player.is_player_2 * GROUND_HALF_WIDTH or\
+                    expected_landing_x >= player.is_player_2 * GROUND_WIDTH + GROUND_HALF_WIDTH) and\
+                    abs(expected_landing_x - other.x) > PLAYER_LENGTH):
+                    user_input.x_direction = x_direction
+                    user_input.y_direction = y_direction
                     return True
     else:
-        for xDirection in range(1, -1, -1):
-            for yDirection in range(1, -2, -1):
-                expectedLandingPointX = expectedLandingPointXWhenPowerHit(xDirection, yDirection, ball)
-                if ((expectedLandingPointX <= player.isPlayer2 * GROUND_HALF_WIDTH or\
-                    expectedLandingPointX >= player.isPlayer2 * GROUND_WIDTH + GROUND_HALF_WIDTH) and\
-                    abs(expectedLandingPointX - theOtherPlayer.x) > PLAYER_LENGTH):
-                    userInput.xDirection = xDirection
-                    userInput.yDIrection = yDirection
+        for x_direction in range(1, -1, -1):
+            for y_direction in range(1, -2, -1):
+                expected_landing_x = expected_power_hit_landing_x(x_direction, y_direction, ball)
+                if ((expected_landing_x <= player.is_player_2 * GROUND_HALF_WIDTH or\
+                    expected_landing_x >= player.is_player_2 * GROUND_WIDTH + GROUND_HALF_WIDTH) and\
+                    abs(expected_landing_x - other.x) > PLAYER_LENGTH):
+                    user_input.x_direction = x_direction
+                    user_input.y_direction = y_direction
                     return True
     return False
 
 
-def expectedLandingPointXWhenPowerHit(userInputXDirection, userInputYDirection, ball):
-    copyBall = CopyBall(ball.x, ball.y, ball.xVelocity, ball.yVelocity)
-    if (copyBall.x < GROUND_HALF_WIDTH):
-        copyBall.xVelocity = (abs(userInputXDirection) + 1) * 10
+def expected_power_hit_landing_x(user_inputx_direction, user_inputy_direction, ball):
+    copy_ball = CopyBall(ball.x, ball.y, ball.x_velocity, ball.y_velocity)
+    if (copy_ball.x < GROUND_HALF_WIDTH):
+        copy_ball.x_velocity = (abs(user_inputx_direction) + 1) * 10
     else:
-        copyBall.xVelocity = -(abs(userInputXDirection) + 1) * 10
+        copy_ball.x_velocity = -(abs(user_inputx_direction) + 1) * 10
 
-    copyBall.yVelocity = abs(copyBall.yVelocity) * userInputYDirection * 2
+    copy_ball.y_velocity = abs(copy_ball.y_velocity) * user_inputy_direction * 2
     
-    loopCounter = 0
+    loop_counter = 0
     while (True):
-        loopCounter += 1
-        futureCopyBallX = copyBall.x + copyBall.xVelocity
+        loop_counter += 1
+        future_copy_ball_x = copy_ball.x + copy_ball.x_velocity
 
         # side bounce
-        if (futureCopyBallX < BALL_RADIUS or futureCopyBallX > GROUND_WIDTH):
-            copyBall.xVelocity = -copyBall.xVelocity
+        if (future_copy_ball_x < BALL_RADIUS or future_copy_ball_x > GROUND_WIDTH):
+            copy_ball.x_velocity = -copy_ball.x_velocity
 
-        if (copyBall.y + copyBall.yVelocity < 0):
-            copyBall.yVelocity = 1
+        if (copy_ball.y + copy_ball.y_velocity < 0):
+            copy_ball.y_velocity = 1
 
-        if abs(copyBall.x - GROUND_HALF_WIDTH) < NET_PILLAR_HALF_WIDTH and\
-            copyBall.y > NET_PILLAR_TOP_TOP_Y_COORD:
-            if copyBall.yVelocity > 0:
-                copyBall.yVelocity = -copyBall.yVelocity
+        if abs(copy_ball.x - GROUND_HALF_WIDTH) < NET_PILLAR_HALF_WIDTH and\
+            copy_ball.y > NET_PILLAR_TOP_TOP_Y_COORD:
+            if copy_ball.y_velocity > 0:
+                copy_ball.y_velocity = -copy_ball.y_velocity
 
-        copyBall.y += copyBall.yVelocity
+        copy_ball.y += copy_ball.y_velocity
 
-        if copyBall.y > BALL_TOUCHING_GROUND_Y_COORD or\
-            loopCounter >= INFINITE_LOOP_LIMIT:
-            return copyBall.x
+        if copy_ball.y > BALL_TOUCHING_GROUND_Y_COORD or\
+            loop_counter >= INFINITE_LOOP_LIMIT:
+            return copy_ball.x
         
-        copyBall.x = copyBall.x + copyBall.xVelocity
-        copyBall.yVelocity += 1
+        copy_ball.x = copy_ball.x + copy_ball.x_velocity
+        copy_ball.y_velocity += 1

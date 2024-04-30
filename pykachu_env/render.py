@@ -137,13 +137,13 @@ class PlayerAnimatedSprite(pygame.sprite.Sprite):
 
         pygame.display.get_surface().blit(self.image, self.rect)
     
-    def setFrameNumber(self, state, frameNumber):
+    def setframe_num(self, state, frame_num):
         if (state < 4) :
-            self.index =  5 * state + frameNumber
+            self.index =  5 * state + frame_num
         elif state == 4:
-            self.index = 17 + frameNumber 
+            self.index = 17 + frame_num 
         else:
-            self.index = 18 + 5 * (state - 5) + frameNumber
+            self.index = 18 + 5 * (state - 5) + frame_num
 
 class BackgroundSprite(pygame.sprite.Sprite):
 
@@ -174,20 +174,20 @@ class BackgroundSprite(pygame.sprite.Sprite):
 
 
     def update(self):
-        self.drawSky()
-        self.drawMountain()
-        self.drawGround()
-        self.drawPillar()
+        self.draw_sky()
+        self.draw_mountain()
+        self.draw_ground()
+        self.draw_pillar()
     
-    def drawSky(self):
+    def draw_sky(self):
         for j in range(12):
             for i in range(27):
                 self.draw(self.sky, 16 * i ,16 * j)
     
-    def drawMountain(self):
+    def draw_mountain(self):
         self.draw(self.mountain, 0, 188)
 
-    def drawGround(self):
+    def draw_ground(self):
         # ground red
         for i in range(27):
             self.draw(self.ground_red, 16 * i, 248)
@@ -205,7 +205,7 @@ class BackgroundSprite(pygame.sprite.Sprite):
             for i in range(27):
                 self.draw(self.ground_yellow, 16 *i, 280 + 16 * j)
 
-    def drawPillar(self): 
+    def draw_pillar(self): 
         self.draw(self.pillar_top, 213, 176)
 
         for i in range(12):
@@ -243,8 +243,8 @@ class GameViewDrawer:
         self.player1 = PlayerAnimatedSprite((0, 0), texture)
         self.player2 = PlayerAnimatedSprite((0, 0), texture)
         self.ball = BallAnimatedSprite((0, 0), texture)
-        self.ballTrail = SingleSprite(self.texture.BALL_TRAIL, (0, 0), texture)
-        self.ballHyper = SingleSprite(self.texture.BALL_HYPER, (0, 0), texture)
+        self.ball_trail = SingleSprite(self.texture.BALL_TRAIL, (0, 0), texture)
+        self.ball_hyper = SingleSprite(self.texture.BALL_HYPER, (0, 0), texture)
         self.punch = SingleSprite(self.texture.BALL_PUNCH, (0, 0), texture)
     
     def draw_players_and_ball(self, physics):
@@ -253,54 +253,54 @@ class GameViewDrawer:
         ball = physics.ball
 
         self.player1.position = (player1.x, player1.y)
-        self.player1.setFrameNumber(player1.state, player1.frameNumber)
+        self.player1.setframe_num(player1.state, player1.frame_num)
 
         if player1.state == 3 or player1.state == 4:
-            self.player1.scale.x = -1 if player1.divingDirection == -1 else 1 
+            self.player1.scale.x = -1 if player1.dive_direction == -1 else 1 
         else:
             self.player1.scale.x = 1
 
         self.player2.position = (player2.x, player2.y)
-        self.player2.setFrameNumber(player2.state, player2.frameNumber)
+        self.player2.setframe_num(player2.state, player2.frame_num)
 
         if player2.state == 3 or player2.state == 4:
-            self.player2.scale.x = 1 if player2.divingDirection == 1 else -1 
+            self.player2.scale.x = 1 if player2.dive_direction == 1 else -1 
         else:
             self.player2.scale.x = -1
 
         self.ball.position = (ball.x, ball.y)
 
-        if ball.punchEffectRadius > 0:
-            ball.punchEffectRadius -= 2
-            self.punch.scale = Scale(2 * ball.punchEffectRadius, 2 * ball.punchEffectRadius)
-            self.punch.position = (ball.punchEffectX, ball.punchEffectY)
+        if ball.punch_effect_radius > 0:
+            ball.punch_effect_radius -= 2
+            self.punch.scale = Scale(2 * ball.punch_effect_radius, 2 * ball.punch_effect_radius)
+            self.punch.position = (ball.punch_effect_x, ball.punch_effect_y)
             self.punch.visible = True
         else:
             self.punch.visible = False
         
-        if ball.isPowerHit:
-            self.ballHyper.position = (ball.previousX, ball.previousY)
-            self.ballTrail.position = (ball.previousPreviousX, ball.previousPreviousY)
+        if ball.is_power_hit:
+            self.ball_hyper.position = (ball.previous_x, ball.previous_y)
+            self.ball_trail.position = (ball.pre_previous_x, ball.pre_previous_y)
             
-            self.ballHyper.visible = True
-            self.ballTrail.visible = True
+            self.ball_hyper.visible = True
+            self.ball_trail.visible = True
         else:
-            self.ballHyper.visible = False
-            self.ballTrail.visible = False
+            self.ball_hyper.visible = False
+            self.ball_trail.visible = False
 
         self.player1.update()
         self.player2.update()
 
-        if self.ballTrail.visible:
-            self.ballTrail.update()
+        if self.ball_trail.visible:
+            self.ball_trail.update()
     
-        if self.ballHyper.visible:
-            self.ballHyper.update()
+        if self.ball_hyper.visible:
+            self.ball_hyper.update()
  
         self.ball.update()
 
         if self.punch.visible:
             self.punch.update()
  
-    def drawBackground(self):
+    def draw_background(self):
         self.background.update()

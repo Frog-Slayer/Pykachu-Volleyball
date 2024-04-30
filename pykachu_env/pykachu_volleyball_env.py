@@ -10,7 +10,7 @@ from constants import (
 )
 
 from render import GameViewDrawer, Texture
-from physics import PikaPhysics
+from physics import PykaPhysics
 
 """
 RL environment for 'single' agent. The opponent is the basic AI, originally implemented in the game.
@@ -34,7 +34,7 @@ class PykachuEnv(gym.Env):
     """
 
     def __init__(self):
-        self.physics = PikaPhysics()
+        self.physics = PykaPhysics()
         self._surface = None
         self.clock = pygame.time.Clock()
         return
@@ -53,33 +53,33 @@ class PykachuEnv(gym.Env):
             "player1": {
                 "x": player1.x,
                 "y": player1.y,
-                "divingDirection" : player1.divingDirection 
+                "dive_direction" : player1.dive_direction 
             },
             "player2":{
                 "x": player2.x,
                 "y": player2.y,
-                "divingDirection" : player2.divingDirection 
+                "dive_direction" : player2.dive_direction 
             },
             "ball": {
                 "x": ball.x,
-                "xVelocity": ball.xVelocity,
+                "x_velocity": ball.x_velocity,
                 "y": ball.y,
-                "yVelocity": ball.yVelocity,
+                "y_velocity": ball.y_velocity,
             }
         }
 
     def step(self, action):
-        userInput = physics.UserInput(action)
-        cpuInput = physics.UserInput()
+        user_input = physics.UserInput(action)
+        cpu_input = physics.UserInput()
 
-        isBallTouchingGround = self.physics.runEngineForNextFrame([userInput, cpuInput])
+        is_ball_touching_ground = self.physics.run_engine([user_input, cpu_input])
         terminated = False 
-        if isBallTouchingGround:
-            if self.physics.ball.punchEffectX < GROUND_HALF_WIDTH:
-                self.isPlayer2Serve = True
+        if is_ball_touching_ground:
+            if self.physics.ball.punch_effect_x < GROUND_HALF_WIDTH:
+                self.is_player_2_serve = True
                 self.reward = -1
             else:
-                self.isPlayer2Serve = False
+                self.is_player_2_serve = False
                 self.reward = 1
 
             terminated = True
@@ -98,7 +98,7 @@ class PykachuEnv(gym.Env):
                 self._surface = pygame.display.set_mode((GROUND_WIDTH, GROUND_HEIGHT))
                 pygame.display.set_caption('Pykachu Volleyball')
                 self.texture = Texture()
-                self.gameView = GameViewDrawer(self.texture)
+                self.view = GameViewDrawer(self.texture)
 
             elif self.render_mode == "rgb_array":
                 return self.observation
@@ -106,15 +106,15 @@ class PykachuEnv(gym.Env):
         # Draw
         if self.render_mode == 'human':
             pygame.event.pump()
-            self.gameView.drawBackground()
-            self.gameView.draw_players_and_ball(self.physics) 
+            self.view.draw_background()
+            self.view.draw_players_and_ball(self.physics) 
             pygame.display.update()
             self.clock.tick(25)
 
-    def reset(self, seed = None, isPlayer2Serve = False):
+    def reset(self, seed = None, is_player_2_serve = False):
         super().reset(seed = seed)
 
-        self.physics.reset(isPlayer2Serve)
+        self.physics.reset(is_player_2_serve)
 
         if self.render_mode is not None:
             self.render()

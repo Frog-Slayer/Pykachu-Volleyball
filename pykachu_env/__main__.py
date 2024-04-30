@@ -5,10 +5,10 @@ from pykachu_volleyball_env import PykachuEnv
 env = PykachuEnv()
 env.render_mode = 'human'
 
-isPlayer2Serve = False
+is_player_2_serve = False
 
 for episode in range(4):
-    env.reset(isPlayer2Serve = isPlayer2Serve)
+    env.reset(is_player_2_serve = is_player_2_serve)
 
     while True:
         env.render()
@@ -18,9 +18,9 @@ for episode in range(4):
 
         if done:
             if reward == 1:
-                isPlayer2Serve = False
+                is_player_2_serve = False
             else:
-                isPlayer2Serve = True
+                is_player_2_serve = True
             break
 
 env.close()
