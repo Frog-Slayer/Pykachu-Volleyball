@@ -131,7 +131,7 @@ class PlayerAnimatedSprite(pygame.sprite.Sprite):
             self.scale = Scale(1, 1) 
 
     def update(self):
-        self.image = pygame.transform.flip(self.images[self.index], True if self.scale.x == -1 else 1, False)
+        self.image = pygame.transform.flip(self.images[self.index], True if self.scale.x == -1 else False, False)
 
         self.rect = self.image.get_rect()
         self.rect.center = self.position
@@ -156,7 +156,7 @@ class SpriteWithAnchor(pygame.sprite.Sprite):
         self.scale = Scale(1, 1) 
 
     def update(self):
-        self.image = pygame.transform.flip(self.image, True if self.scale.x == -1 else 1, False)
+        self.image = pygame.transform.flip(self.image, True if self.scale.x == -1 else False, False)
         self.rect = self.image.get_rect()
         self.rect.center = self.position
         pygame.display.get_surface().blit(self.image, self.rect)
