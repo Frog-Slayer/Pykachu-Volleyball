@@ -205,7 +205,7 @@ def processCollisionBetweenBallAndWorldAndSetBallPosition(ball):
                 ball.yVelocity = -ball.yVelocity
         else:
             if (ball.x < GROUND_HALF_WIDTH):
-                ball.xVelocity = -abs(ball.xVeloocity)
+                ball.xVelocity = -abs(ball.xVelocity)
             else:
                 ball.xVelocity = abs(ball.xVelocity)
                     
