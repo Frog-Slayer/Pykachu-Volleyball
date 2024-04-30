@@ -163,6 +163,8 @@ class BackgroundSprite(pygame.sprite.Sprite):
 
             # Ground Line
             self.ground_line = self.texture.getCroppedImage(self.texture.GROUND_LINE)
+            self.ground_line_left = self.texture.getCroppedImage(self.texture.GROUND_LINE_LEFT_MOST)
+            self.ground_line_right = self.texture.getCroppedImage(self.texture.GROUND_LINE_RIGHT_MOST)
 
             # Ground Yellow
             self.ground_yellow = self.texture.getCroppedImage(self.texture.GROUND_LINE) 
@@ -175,6 +177,7 @@ class BackgroundSprite(pygame.sprite.Sprite):
     def update(self):
         self.drawSky()
         self.drawMountain()
+        self.drawGround()
     
     def drawSky(self):
         for j in range(12):
@@ -187,6 +190,37 @@ class BackgroundSprite(pygame.sprite.Sprite):
         rect = self.mountain.get_rect()
         rect.x, rect.y = 0, 188 
         pygame.display.get_surface().blit(self.mountain, rect)
+
+    def drawGround(self):
+        # ground red
+        for i in range(27):
+            rect = self.ground_red.get_rect()
+            rect.x, rect.y = 16 *i, 248
+            pygame.display.get_surface().blit(self.ground_red, rect)
+       
+        # ground line
+        for i in range(26):
+            rect = self.ground_line.get_rect()
+            rect.x, rect.y = 16 *i, 264
+            pygame.display.get_surface().blit(self.ground_line, rect)
+
+        rect = self.ground_line_left.get_rect()
+        rect.x, rect.y = 0, 264
+        pygame.display.get_surface().blit(self.ground_line_left, rect)
+
+        rect = self.ground_line_right.get_rect()
+        rect.x, rect.y = 432-16, 264
+        pygame.display.get_surface().blit(self.ground_line_right, rect)
+
+        # ground yellow
+        for j in range(2):
+            for i in range(27):
+                rect = self.ground_yellow.get_rect()
+                rect.x, rect.y = 16 *i, 280 + 16 * j
+                pygame.display.get_surface().blit(self.ground_yellow, rect)
+
+
+
 
 
 
