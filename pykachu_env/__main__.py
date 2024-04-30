@@ -2,7 +2,7 @@ import gymnasium as gym
 import numpy as np
 from pykachu_volleyball_env import PykachuEnv
 
-env = PykachuEnv(isPlayer1Computer= True, isPlayer2Computer= True)
+env = PykachuEnv()
 env.render_mode = 'human'
 
 isPlayer2Serve = False

@@ -33,8 +33,8 @@ class PykachuEnv(gym.Env):
     metadata for the environment containing rendering modes, etc 
     """
 
-    def __init__(self, isPlayer1Computer, isPlayer2Computer):
-        self.physics = PikaPhysics(isPlayer1Computer, isPlayer2Computer)
+    def __init__(self):
+        self.physics = PikaPhysics()
         self._surface = None
         self.clock = pygame.time.Clock()
         return

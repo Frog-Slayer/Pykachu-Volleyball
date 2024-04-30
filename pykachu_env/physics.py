@@ -16,9 +16,9 @@ from constants import (
 )
 
 class PikaPhysics:
-    def __init__(self, isPlayer1Computer, isPlayer2Computer):
-        self.player1 = Player(isPlayer2= False, isComputer= isPlayer1Computer)
-        self.player2 = Player(isPlayer2= True, isComputer= isPlayer2Computer)
+    def __init__(self):
+        self.player1 = Player(isPlayer2= False, isComputer=True)
+        self.player2 = Player(isPlayer2= True, isComputer=True)
         self.ball = Ball(False)
         return
     
@@ -68,6 +68,10 @@ class Player:
         self.yVelocity = 0
         self.isCollisionWithBallHappened = False
         
+        """
+        Player's state
+        0: idle, 1: jumping, 2: jump and power hit, 3: diving, 4: lying down after diving
+        """
         self.state = 0 
         self.frameNumber = 0
         self.normalStatusArmSwingDirection  = 1
@@ -135,7 +139,6 @@ def physicsEngine(player1, player2, ball, userInputArray):
             theOtherPlayer,
             ball
         )
-        
     
     for i in range(2):
         if (i == 0):
@@ -263,6 +266,7 @@ def processPlayerMovementAndSetPlayerPosition(player, userInput, theOtherPlayer,
         
     futurePlayerY   = player.y + player.yVelocity
     player.y        = futurePlayerY
+
     if (futurePlayerY < PLAYER_TOUCHING_GROUND_Y_COORD):
         player.yVelocity    += 1
     elif (futurePlayerY > PLAYER_TOUCHING_GROUND_Y_COORD):
