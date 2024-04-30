@@ -260,7 +260,6 @@ def processPlayerMovementAndSetPlayerPosition(player, userInput, theOtherPlayer,
         
     futurePlayerY   = player.y + player.yVelocity
     player.y        = futurePlayerY
-
     if (futurePlayerY < PLAYER_TOUCHING_GROUND_Y_COORD):
         player.yVelocity    += 1
     elif (futurePlayerY > PLAYER_TOUCHING_GROUND_Y_COORD):

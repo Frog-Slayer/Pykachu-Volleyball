@@ -60,7 +60,7 @@ class Texture:
 
     def getCroppedImage(self, path): #works well
         if self.sheet is None: 
-            self.sheet= pygame.image.load(IMAGE_PATH + '/sprite_sheet.png').convert()
+            self.sheet= pygame.image.load(IMAGE_PATH + '/sprite_sheet.png').convert_alpha()
 
         frame = sprite_json['frames'][path]['frame']
         rect = (frame['x'], frame['y'], frame['w'], frame['h']) 
@@ -133,7 +133,7 @@ class PlayerAnimatedSprite(pygame.sprite.Sprite):
 
     def update(self):
         self.index = (self.index + 1) % len(self.images);
-        self.image = pygame.transform.flip(self.images[self.index], False, True if self.scale.x == -1 else 1)
+        self.image = pygame.transform.flip(self.images[self.index], True if self.scale.x == -1 else 1, False)
 
         self.rect = self.image.get_rect()
         self.rect.center = self.position
@@ -149,7 +149,7 @@ class SpriteWithAnchor(pygame.sprite.Sprite):
         self.scale = Scale(1, 1) 
 
     def update(self):
-        self.image = pygame.transform.flip(self.image, False, True if self.scale.x == -1 else 1)
+        self.image = pygame.transform.flip(self.image, True if self.scale.x == -1 else 1, False)
         self.rect = self.image.get_rect()
         self.rect.center = self.position
         pygame.display.get_surface().blit(self.image, self.rect)
@@ -172,7 +172,6 @@ class GameViewDrawer:
         ball = physics.ball
 
         self.player1.position = (player1.x, player1.y)
-        print("player1:" + str(self.player1.position))
 
         if player1.state == 3 or player1.state == 4:
             self.player1.scale.x = -1 if player1.divingDirection == -1 else 1 
@@ -180,7 +179,6 @@ class GameViewDrawer:
             self.player1.scale.x = 1
 
         self.player2.position = (player2.x, player2.y)
-        print("player2:" + str(self.player2.position))
 
         if player2.state == 3 or player2.state == 4:
             self.player2.scale.x = 1 if player2.divingDirection == 1 else -1 

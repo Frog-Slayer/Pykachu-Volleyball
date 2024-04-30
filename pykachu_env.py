@@ -44,6 +44,30 @@ class PykachuEnv(gym.Env):
         pixels = pygame.surfarray.pixels3d(self._surface)
         return np.transpose(np.array(pixels), axes=(1, 0, 2))
 
+    @property
+    def info(self):
+        player1 = self.physics.player1
+        player2 = self.physics.player2
+        ball = self.physics.ball
+        return {
+            "player1": {
+                "x": player1.x,
+                "y": player1.y,
+                "divingDirection" : player1.divingDirection 
+            },
+            "player2":{
+                "x": player2.x,
+                "y": player2.y,
+                "divingDirection" : player2.divingDirection 
+            },
+            "ball": {
+                "x": ball.x,
+                "xVelocity": ball.xVelocity,
+                "y": ball.y,
+                "yVelocity": ball.yVelocity,
+            }
+        }
+
     def step(self, action):
         isBallTouchingGround = self.physics.runEngineForNextFrame([pykachu_physics.PikaUserInput(action), pykachu_physics.PikaUserInput([0, 0, 0])])
         terminated = False 
@@ -59,7 +83,7 @@ class PykachuEnv(gym.Env):
         else:
             self.reward = 0
 
-        return self.observation, self.reward, terminated
+        return self.observation, self.reward, terminated, self.info
 
 
     def render(self):

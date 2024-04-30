@@ -8,9 +8,10 @@ import pykachu_env
 env = pykachu_env.PykachuEnv(False, False)
 env.render_mode = 'human'
 
-for _ in range(100):
+for _ in range(300):
     env.render()
     action = env.action_space.sample()
-    state, reward, done = env.step(action)
+    state, reward, done, info = env.step(action)
+    print(info)
 
 env.close()
