@@ -114,7 +114,7 @@ class CopyBall:
         self.yVelocity = yVelocity
 
 def rand():
-    return math.floor(32768 * random.random())
+    return int(32768 * random.random())
 
 def physicsEngine(player1, player2, ball, userInputArray):
     isBallTouchingGround = processCollisionBetweenBallAndWorldAndSetBallPosition(ball)
@@ -158,7 +158,6 @@ def physicsEngine(player1, player2, ball, userInputArray):
                     player.state
                 )
             player.isCollisionWithBallHappened = True
-            print("collision")
         else:
             player.isCollisionWithBallHappened = False
                 
@@ -169,8 +168,7 @@ def isCollisionBetweenBallAndPlayerHappened(ball, playerX, playerY):
     diff = ball.x - playerX
     if (abs(diff) <= PLAYER_HALF_LENGTH):
         diff = ball.y - playerY
-        if (abs(diff) <= PLAYER_HALF_LENGTH):
-            return True
+        return abs(diff) <= PLAYER_HALF_LENGTH
         
     return False
         
@@ -254,7 +252,7 @@ def processPlayerMovementAndSetPlayerPosition(player, userInput, theOtherPlayer,
     else:
         if (futurePlayerX < GROUND_HALF_WIDTH + PLAYER_HALF_LENGTH):
             player.x = GROUND_HALF_WIDTH + PLAYER_HALF_LENGTH
-        elif (futurePlayerX > GROUND_HALF_WIDTH - PLAYER_HALF_LENGTH):
+        elif (futurePlayerX > GROUND_WIDTH - PLAYER_HALF_LENGTH):
             player.x = GROUND_WIDTH - PLAYER_HALF_LENGTH
     
     if (player.state < 3 and userInput.yDirection == -1 and player.y == PLAYER_TOUCHING_GROUND_Y_COORD):
@@ -371,31 +369,32 @@ def calculateExpectedLandingPointXFor(ball):
     loopCounter = 0
     while (True):
         loopCounter += 1
-        
         futureCopyBallX = copyBall.xVelocity + copyBall.x
-        if (futureCopyBallX < BALL_RADIUS or futureCopyBallX > GROUND_WIDTH):
+
+        if futureCopyBallX < BALL_RADIUS or futureCopyBallX > GROUND_WIDTH:
             copyBall.xVelocity = -copyBall.xVelocity
-        if (copyBall.y + copyBall.yVelocity < 0):
+
+        if copyBall.y + copyBall.yVelocity < 0:
             copyBall.yVelocity = 1
         
-        if (abs(copyBall.x - GROUND_HALF_WIDTH) < NET_PILLAR_HALF_WIDTH and \
-            copyBall.y > NET_PILLAR_TOP_TOP_Y_COORD):
-            if (copyBall.y < NET_PILLAR_TOP_BOTTOM_Y_COORD):
-                if (copyBall.yVelocity > 0):
+        if abs(copyBall.x - GROUND_HALF_WIDTH) < NET_PILLAR_HALF_WIDTH and \
+            copyBall.y > NET_PILLAR_TOP_TOP_Y_COORD:
+            if copyBall.y < NET_PILLAR_TOP_BOTTOM_Y_COORD:
+                if copyBall.yVelocity > 0:
                     copyBall.yVelocity = -copyBall.yVelocity
             else:
-                if (copyBall.x < GROUND_HALF_WIDTH):
+                if copyBall.x < GROUND_HALF_WIDTH:
                     copyBall.xVelocity = -abs(copyBall.xVelocity)
                 else:
                     copyBall.xVelocity = abs(copyBall.xVelocity)
         
-        copyBall.y = copyBall.y + copyBall.yVelocity
+        copyBall.y += copyBall.yVelocity
         
         if (copyBall.y > BALL_TOUCHING_GROUND_Y_COORD or \
             loopCounter >= INFINITE_LOOP_LIMIT):
             break
         
-        copyBall.x = copyBall.x = copyBall.xVelocity
+        copyBall.x += copyBall.xVelocity
         copyBall.yVelocity += 1
     
     ball.expectedLandingPointX = copyBall.x
@@ -406,17 +405,16 @@ def letComputerDecideUserInput(player, ball, theOtherPlayer, userInput):
     userInput.yDirection    = 0
     userInput.powerHit      = 0
     
-    virtualExpectedLandingPointX    = ball.expectedLandingPointX
+    virtualExpectedLandingPointX = ball.expectedLandingPointX
     if (abs(ball.x - player.x) > 100 and \
         abs(ball.xVelocity) < player.computerBoldness + 5):
 
         leftBoundary    =   (player.isPlayer2) * GROUND_HALF_WIDTH      
 
-        if (ball.expectedLandingPointX <= leftBoundary or\
+        if ball.expectedLandingPointX <= leftBoundary or\
             (ball.expectedLandingPointX >= (player.isPlayer2) * GROUND_WIDTH + GROUND_HALF_WIDTH and\
-            player.computerWhereToStandBy == 0)
-            ):
-            virtualExpectedLandingPointX = leftBoundary + int(GROUND_HALF_WIDTH / 2)
+            player.computerWhereToStandBy == 0):
+            virtualExpectedLandingPointX = leftBoundary + GROUND_HALF_WIDTH // 2
     
     if (abs(virtualExpectedLandingPointX - player.x) > player.computerBoldness + 8):
         if (player.x < virtualExpectedLandingPointX):
@@ -426,13 +424,12 @@ def letComputerDecideUserInput(player, ball, theOtherPlayer, userInput):
     elif (rand() % 20 == 0):
         player.computerWhereToStandBy = rand() % 2
         
-    if (player.state == 0):
+    if player.state == 0:
         if (abs(ball.xVelocity) < player.computerBoldness + 3   and\
             abs(ball.x - player.x) < PLAYER_HALF_LENGTH         and\
             ball.y > -36                                        and\
             ball.y < 10 * player.computerBoldness + 84          and\
-            ball.yVelocity > 0            
-            ):
+            ball.yVelocity > 0):
             userInput.yDirection = -1
         
         leftBoundary = player.isPlayer2 * GROUND_HALF_WIDTH
@@ -443,49 +440,45 @@ def letComputerDecideUserInput(player, ball, theOtherPlayer, userInput):
             abs(ball.x - player.x) > player.computerBoldness * 5 + PLAYER_LENGTH    and\
             ball.x > leftBoundary                                                   and\
             ball.y < rightBoundary                                                  and\
-            ball.y > 174
-            ):
+            ball.y > 174):
             userInput.powerHit  = 1
             if (player.x < ball.x):
                 userInput.xDirection = 1
             else:
                 userInput.xDirection = -1
-    elif (player.state == 1 or player.state == 2):
-        if (abs(ball.x - player.x) > 8):
+    elif player.state == 1 or player.state == 2:
+        if abs(ball.x - player.x) > 8:
             userInput.xDirection = 1
         else:
             userInput.xDirection = -1
         
-        if (abs(ball.x - player.x) < 48 and abs(ball.y - player.y) < 48):
+        if abs(ball.x - player.x) < 48 and abs(ball.y - player.y) < 48:
             willInputPowerHit = decideWhetherInputPowerHit(player, ball, theOtherPlayer, userInput)
-            if (willInputPowerHit):
+            if willInputPowerHit:
                 userInput.powerHit = 1
-                if (abs(theOtherPlayer.x - player.x) < 80           and\
-                    userInput.yDirection != -1):
+                if abs(theOtherPlayer.x - player.x) < 80 and userInput.yDirection != -1:
                     userInput.yDirection = -1
     return                
 
 
 def decideWhetherInputPowerHit(player, ball, theOtherPlayer, userInput):
     if (rand() % 2 == 0):
-        for xDirection in range(1, -1):
+        for xDirection in range(1, -1, -1):
             for yDirection in range(-1, 2):
                 expectedLandingPointX = expectedLandingPointXWhenPowerHit(xDirection, yDirection, ball)
                 if ((expectedLandingPointX <= player.isPlayer2 * GROUND_HALF_WIDTH or\
                     expectedLandingPointX >= player.isPlayer2 * GROUND_WIDTH + GROUND_HALF_WIDTH) and\
-                    abs(expectedLandingPointX - theOtherPlayer.x) > PLAYER_LENGTH   
-                ):
+                    abs(expectedLandingPointX - theOtherPlayer.x) > PLAYER_LENGTH):
                     userInput.xDirection = xDirection
                     userInput.yDIrection = yDirection
                     return True
     else:
-        for xDirection in range(1, -1):
+        for xDirection in range(1, -1, -1):
             for yDirection in range(1, -2):
                 expectedLandingPointX = expectedLandingPointXWhenPowerHit(xDirection, yDirection, ball)
                 if ((expectedLandingPointX <= player.isPlayer2 * GROUND_HALF_WIDTH or\
                     expectedLandingPointX >= player.isPlayer2 * GROUND_WIDTH + GROUND_HALF_WIDTH) and\
-                    abs(expectedLandingPointX - theOtherPlayer.x) > PLAYER_LENGTH   
-                ):
+                    abs(expectedLandingPointX - theOtherPlayer.x) > PLAYER_LENGTH):
                     userInput.xDirection = xDirection
                     userInput.yDIrection = yDirection
                     return True

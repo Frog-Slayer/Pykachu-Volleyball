@@ -217,12 +217,6 @@ class BackgroundSprite(pygame.sprite.Sprite):
         rect.x, rect.y = x, y 
         pygame.display.get_surface().blit(surface, rect)
 
-
-
-
-
-
-
 class SpriteWithAnchor(pygame.sprite.Sprite):
 
     def __init__(self, path, position, texture):
@@ -295,8 +289,6 @@ class GameViewDrawer:
         self.ball.update()
         self.player1.update()
         self.player2.update()
-
-        print(self.ball.position)
 
     def drawBackground(self):
         self.background.update()
