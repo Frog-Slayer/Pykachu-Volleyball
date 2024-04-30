@@ -336,7 +336,7 @@ def processCollisionBetweenBallAndPlayer(ball, playerX, userInput, playerState):
         ball.xVelocity = (rand() % 3) - 1
     
     ballAbsYVelocity = abs(ball.yVelocity)
-    ball.yVelocity = - ballAbsYVelocity
+    ball.yVelocity = -ballAbsYVelocity
     
     if (ballAbsYVelocity < 15):
         ball.yVelocity = -15
@@ -350,7 +350,7 @@ def processCollisionBetweenBallAndPlayer(ball, playerX, userInput, playerState):
         ball.punchEffectX = ball.x
         ball.punchEffectY = ball.y
         
-        ball.yVelocity - abs(ball.yVelocity) * userInput.yDirection * 2
+        ball.yVelocity = abs(ball.yVelocity) * userInput.yDirection * 2
         ball.punchEffectRadius  = BALL_RADIUS
         #ball.sound.powerHit    = True
         ball.isPowerHit         = True

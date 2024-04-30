@@ -95,7 +95,6 @@ class BallAnimatedSprite(pygame.sprite.Sprite):
         self.rect = None
 
     def update(self):
-        self.index = (self.index + 1) % len(self.images);
         self.image = self.images[self.index]
         self.rect = self.image.get_rect()
         self.rect.center = self.position
@@ -132,13 +131,21 @@ class PlayerAnimatedSprite(pygame.sprite.Sprite):
             self.scale = Scale(1, 1) 
 
     def update(self):
-        self.index = (self.index + 1) % len(self.images);
         self.image = pygame.transform.flip(self.images[self.index], True if self.scale.x == -1 else 1, False)
 
         self.rect = self.image.get_rect()
         self.rect.center = self.position
 
         pygame.display.get_surface().blit(self.image, self.rect)
+    
+    def setFrameNumber(self, state, frameNumber):
+        if (state < 4) :
+            self.index =  5 * state + frameNumber
+        elif state == 4:
+            self.index = 17 + frameNumber 
+        else:
+            self.index = 18 + 5 * (state - 5) + frameNumber
+
 
 class SpriteWithAnchor(pygame.sprite.Sprite):
 
@@ -162,9 +169,9 @@ class GameViewDrawer:
         self.player1 = PlayerAnimatedSprite((0, 0), texture)
         self.player2 = PlayerAnimatedSprite((0, 0), texture)
         self.ball = BallAnimatedSprite((0, 0), texture)
-        self.ballTrail = SpriteWithAnchor(self.texture.BALL_TRAIL, (0.5, 0.5), texture)
-        self.ballHyper = SpriteWithAnchor(self.texture.BALL_HYPER, (0.5, 0.5), texture)
-        self.punch = SpriteWithAnchor(self.texture.BALL_PUNCH, (0.5, 0.5), texture)
+        self.ballTrail = SpriteWithAnchor(self.texture.BALL_TRAIL, (0, 0), texture)
+        self.ballHyper = SpriteWithAnchor(self.texture.BALL_HYPER, (0, 0), texture)
+        self.punch = SpriteWithAnchor(self.texture.BALL_PUNCH, (0, 0), texture)
     
     def draw_players_and_ball(self, physics):
         player1 = physics.player1
@@ -172,6 +179,7 @@ class GameViewDrawer:
         ball = physics.ball
 
         self.player1.position = (player1.x, player1.y)
+        self.player1.setFrameNumber(player1.state, player1.frameNumber)
 
         if player1.state == 3 or player1.state == 4:
             self.player1.scale.x = -1 if player1.divingDirection == -1 else 1 
@@ -179,6 +187,7 @@ class GameViewDrawer:
             self.player1.scale.x = 1
 
         self.player2.position = (player2.x, player2.y)
+        self.player2.setFrameNumber(player2.state, player2.frameNumber)
 
         if player2.state == 3 or player2.state == 4:
             self.player2.scale.x = 1 if player2.divingDirection == 1 else -1 
