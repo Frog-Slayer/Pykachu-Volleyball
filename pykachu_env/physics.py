@@ -447,18 +447,19 @@ def letComputerDecideUserInput(player, ball, theOtherPlayer, userInput):
             ball.expectedLandingPointX < rightBoundary                              and\
             abs(ball.x - player.x) > player.computerBoldness * 5 + PLAYER_LENGTH    and\
             ball.x > leftBoundary                                                   and\
-            ball.y < rightBoundary                                                  and\
+            ball.x < rightBoundary                                                  and\
             ball.y > 174):
             userInput.powerHit  = 1
             if (player.x < ball.x):
                 userInput.xDirection = 1
             else:
                 userInput.xDirection = -1
-    elif player.state == 1 or player.state == 2:
+    elif player.state == 1 or player.state == 2:# jumping
         if abs(ball.x - player.x) > 8:
-            userInput.xDirection = 1
-        else:
-            userInput.xDirection = -1
+            if player.x < ball.x:
+                userInput.xDirection = 1
+            else:
+                userInput.xDirection = -1
         
         if abs(ball.x - player.x) < 48 and abs(ball.y - player.y) < 48:
             willInputPowerHit = decideWhetherInputPowerHit(player, ball, theOtherPlayer, userInput)
