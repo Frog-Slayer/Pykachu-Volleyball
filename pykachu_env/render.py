@@ -64,8 +64,9 @@ class Texture:
         frame = sprite_json['frames'][path]['frame']
         rect = (frame['x'], frame['y'], frame['w'], frame['h']) 
         rect = pygame.Rect(rect)
-        image = pygame.Surface(rect.size).convert()
+        image = pygame.Surface(rect.size, pygame.SRCALPHA).convert_alpha()
         image.blit(self.sheet, (0, 0), rect)
+
         return image
 
 class BallAnimatedSprite(pygame.sprite.Sprite):

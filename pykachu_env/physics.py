@@ -408,9 +408,10 @@ def letComputerDecideUserInput(player, ball, theOtherPlayer, userInput):
     
     virtualExpectedLandingPointX    = ball.expectedLandingPointX
     if (abs(ball.x - player.x) > 100 and \
-        abs(ball.xVelocity) < player.computerBoldness + 5        
-        ):
+        abs(ball.xVelocity) < player.computerBoldness + 5):
+
         leftBoundary    =   (player.isPlayer2) * GROUND_HALF_WIDTH      
+
         if (ball.expectedLandingPointX <= leftBoundary or\
             (ball.expectedLandingPointX >= (player.isPlayer2) * GROUND_WIDTH + GROUND_HALF_WIDTH and\
             player.computerWhereToStandBy == 0)

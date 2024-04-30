@@ -106,7 +106,6 @@ class PykachuEnv(gym.Env):
         # Draw
         if self.render_mode == 'human':
             pygame.event.pump()
-            self._surface.fill((0, 0, 0))
             self.gameView.drawBackground()
             self.gameView.draw_players_and_ball(self.physics) 
             pygame.display.update()
