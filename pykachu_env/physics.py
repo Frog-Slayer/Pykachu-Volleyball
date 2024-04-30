@@ -228,7 +228,7 @@ def processPlayerMovementAndSetPlayerPosition(player, userInput, theOtherPlayer,
     if (player.isComputer):
         letComputerDecideUserInput(player, ball, theOtherPlayer, userInput)
     
-    if (player.state == 4):
+    if (player.state == 4): #diving
         player.lyingDownDurationLeft += -1
         if (player.lyingDownDurationLeft < -1):
             player.state = 0
@@ -238,7 +238,7 @@ def processPlayerMovementAndSetPlayerPosition(player, userInput, theOtherPlayer,
     if (player.state < 5):
         if (player.state < 3):
             playerVelocityX = userInput.xDirection * 6
-        else:
+        else: # diving
             playerVelocityX = player.divingDirection * 8
             
     futurePlayerX = player.x + playerVelocityX
@@ -271,7 +271,7 @@ def processPlayerMovementAndSetPlayerPosition(player, userInput, theOtherPlayer,
         player.frameNumber  = 0
         if (player.state == 3):
             player.state    = 4
-            player.frameNuber = 0
+            player.frameNumber = 0
             player.lyingDownDurationLeft = 3
         else:
             player.state    = 0
@@ -282,7 +282,7 @@ def processPlayerMovementAndSetPlayerPosition(player, userInput, theOtherPlayer,
             player.frameNumber  = 0
             player.state        = 2
             #player.sound.pika = True
-        elif (player.state == 0 and userInput.xDirection != 0):
+        elif (player.state == 0 and userInput.xDirection != 0): # dive
             player.state        = 3
             player.frameNumber  = 0
             player.divingDirection = userInput.xDirection
@@ -416,7 +416,7 @@ def letComputerDecideUserInput(player, ball, theOtherPlayer, userInput):
             player.computerWhereToStandBy == 0):
             virtualExpectedLandingPointX = leftBoundary + GROUND_HALF_WIDTH // 2
     
-    if (abs(virtualExpectedLandingPointX - player.x) > player.computerBoldness + 8):
+    if abs(virtualExpectedLandingPointX - player.x) > player.computerBoldness + 8:
         if (player.x < virtualExpectedLandingPointX):
             userInput.xDirection = 1
         else:
@@ -488,9 +488,9 @@ def decideWhetherInputPowerHit(player, ball, theOtherPlayer, userInput):
 def expectedLandingPointXWhenPowerHit(userInputXDirection, userInputYDirection, ball):
     copyBall = CopyBall(ball.x, ball.y, ball.xVelocity, ball.yVelocity)
     if (copyBall.x < GROUND_HALF_WIDTH):
-        copyBall.xVelocity = abs(userInputXDirection + 1) * 10
+        copyBall.xVelocity = (abs(userInputXDirection) + 1) * 10
     else:
-        copyBall.xVelocity = -abs(userInputXDirection + 1) * 10
+        copyBall.xVelocity = -(abs(userInputXDirection) + 1) * 10
 
     copyBall.yVelocity = abs(copyBall.yVelocity) * userInputYDirection * 2
     
@@ -499,20 +499,22 @@ def expectedLandingPointXWhenPowerHit(userInputXDirection, userInputYDirection, 
         loopCounter += 1
         
         futureCopyBallX = copyBall.x + copyBall.xVelocity
+
         if (futureCopyBallX < BALL_RADIUS or futureCopyBallX > GROUND_WIDTH):
             copyBall.xVelocity = -copyBall.xVelocity
+
         if (copyBall.y + copyBall.yVelocity < 0):
             copyBall.yVelocity = 1
-        if (abs(copyBall.x - GROUND_HALF_WIDTH) < NET_PILLAR_HALF_WIDTH and\
-            copyBall.y > NET_PILLAR_TOP_TOP_Y_COORD
-            ):
-            if (copyBall.yVelocity > 0):
+
+        if abs(copyBall.x - GROUND_HALF_WIDTH) < NET_PILLAR_HALF_WIDTH and\
+            copyBall.y > NET_PILLAR_TOP_TOP_Y_COORD:
+            if copyBall.yVelocity > 0:
                 copyBall.yVelocity = -copyBall.yVelocity
-        copyBall.y = copyBall.y + copyBall.yVelocity
-        if (
-            copyBall.y > BALL_TOUCHING_GROUND_Y_COORD or\
-            loopCounter >= INFINITE_LOOP_LIMIT
-        ):
+
+        copyBall.y += copyBall.yVelocity
+
+        if copyBall.y > BALL_TOUCHING_GROUND_Y_COORD or\
+            loopCounter >= INFINITE_LOOP_LIMIT:
             return copyBall.x
         
         copyBall.x = copyBall.x + copyBall.xVelocity
