@@ -27,16 +27,15 @@ class PikaPhysics:
         return isBallTouchingGround
     
 class PikaUserInput:
-    def __init__ (self):
-        self.xDirection = 0
-        self.yDirection = 0
-        self.powerHit = 0
-        return
-    
-    def __init__(self, action):
-        self.yDirection = action[0]
-        self.xDirection = action[1]
-        self.powerHit   = action[2]
+    def __init__(self, action = None):
+        if action is None:
+            self.xDirection = 0
+            self.yDirection = 0
+            self.powerHit = 0
+        else : 
+            self.yDirection = action[0]
+            self.xDirection = action[1]
+            self.powerHit   = action[2]
         return
     
 class Player:
