@@ -111,9 +111,10 @@ class PykachuEnv(gym.Env):
             pygame.display.update()
             self.clock.tick(25)
 
-    def reset(self, seed = None):
+    def reset(self, seed = None, isPlayer2Serve = False):
         super().reset(seed = seed)
-        self.physics.reset()
+
+        self.physics.reset(isPlayer2Serve)
 
         if self.render_mode is not None:
             self.render()
