@@ -1,0 +1,25 @@
+[project]
+name = 'pykachu-volleyball-env'
+version = '0.0.1'
+description = 'A single-agent reinforcement learning environment of the game Pikachu Volleyball, using gymnasium'
+authors = [
+    { name = 'Frog-Slayer', email = 'pj0642@gmail.com' },
+]
+keywords = ['pikachu', 'volleyball', 'gym', 'gymnasium', 'reinforcement-learning']
+requires-python = '>=3.8'
+classifiers = [
+    'Programming Language :: Python :: 3.8',
+    'Programming Language :: Python :: 3.9',
+    'Programming Language :: Python :: 3.10',
+]
+dependencies = [
+    "gymnasium ~= 0.29.1",
+    "numpy ~= 1.26.4",
+    "pygame ~= 2.5.2"
+]
+
+[build-system]
+requires = ["setuptools ~= 65.5.0"]
+
+[project.urls]
+repository = 'https://github.com/Frog-Slayer/Pykachu-Volleyball'

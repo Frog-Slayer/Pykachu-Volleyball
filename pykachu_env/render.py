@@ -10,7 +10,6 @@ SOUND_PATH = ASSETS_PATH + '/sounds'
 with open(SPRITE_JSON) as f:
     sprite_json = json.load(f)
 
-
 class Scale:
     def __init__(self, x, y):
         self.x = x

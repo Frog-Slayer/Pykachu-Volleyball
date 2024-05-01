@@ -1,6 +1,6 @@
 import random as random
 
-from constants import (
+from .constants import (
     GROUND_WIDTH,
     GROUND_HALF_WIDTH,
     PLAYER_LENGTH,

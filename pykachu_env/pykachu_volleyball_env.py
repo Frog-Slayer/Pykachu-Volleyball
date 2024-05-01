@@ -3,14 +3,13 @@ import numpy as np
 import pygame
 
 from gymnasium.spaces import MultiDiscrete, Box
-import physics
 
-from constants import (
+from .constants import (
     GROUND_HEIGHT, GROUND_WIDTH, GROUND_HALF_WIDTH
 )
 
-from render import GameViewDrawer, Texture
-from physics import PykaPhysics
+from .render import GameViewDrawer, Texture
+from .physics import PykaPhysics
 
 """
 RL environment for 'single' agent. The opponent is the basic AI, originally implemented in the game.
@@ -88,8 +87,8 @@ class PykachuEnv(gym.Env):
         }
 
     def step(self, action):
-        player1_input = physics.UserInput(action)
-        player2_input = physics.UserInput(action)
+        player1_input = self.physics.UserInput(action)
+        player2_input = self.physics.UserInput(action)
 
         self.is_ball_touching_ground = self.physics.run_engine([player1_input, player2_input])
 

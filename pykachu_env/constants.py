@@ -11,5 +11,3 @@ NET_PILLAR_HALF_WIDTH           = 25
 NET_PILLAR_TOP_TOP_Y_COORD      = 176
 NET_PILLAR_TOP_BOTTOM_Y_COORD   = 192
 INFINITE_LOOP_LIMIT             = 1000
-
-####################### Physics #############################
