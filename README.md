@@ -1,6 +1,6 @@
 # Pykachu-Volleyball
 
-(대충 사진)
+![pikachu](./pika.gif)
 
 # Introduction
 The source code on this repository is an adaption of [the code](https://github.com/gorisanson/pikachu-volleyball), which is gained by reverse engineering the original game, developed by "(C) SACHI SOFT"
@@ -20,9 +20,7 @@ env = gym.make('PykachuVolleyball-v0',
                is_player_2_computer=False)
 ```
 
-
-
-
+Create your environment through `gym.make('PykachuVolleyball-v0')`. Options include `render_mode`, and `is_player_2_computer`, which determines which player the computer will control.
 
 |                   |                          |
 |-------------------|--------------------------|
