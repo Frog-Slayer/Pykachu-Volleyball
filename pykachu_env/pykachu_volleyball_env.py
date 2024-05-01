@@ -19,7 +19,7 @@ Multi-agent environment using pettingzoo will be added later
 class PykachuEnv(gym.Env):
     action_space = MultiDiscrete([3, 3, 1]) 
     """
-    (none, up, down), (node, left, right), (none, power hit)
+    (node, left, right), (none, up, down), (none, power hit)
     """
     
     observation_space = Box(low = 0, high = 255, shape=(GROUND_WIDTH, GROUND_HEIGHT, 3),
@@ -33,10 +33,12 @@ class PykachuEnv(gym.Env):
     metadata for the environment containing rendering modes, etc 
     """
 
-    def __init__(self):
-        self.physics = PykaPhysics()
+    def __init__(self, is_player_2_computer = False):
+        self.physics = PykaPhysics(is_player_2_computer)
         self._surface = None
-        self.clock = pygame.time.Clock()
+        self._clock = pygame.time.Clock()
+        self.is_player_2_computer = is_player_2_computer
+        self.is_player_2_serve = False
         return
 
     @property
@@ -69,18 +71,24 @@ class PykachuEnv(gym.Env):
         }
 
     def step(self, action):
-        user_input = physics.UserInput(action)
-        cpu_input = physics.UserInput()
+        player1_input = physics.UserInput(action)
+        player2_input = physics.UserInput(action)
 
-        is_ball_touching_ground = self.physics.run_engine([user_input, cpu_input])
+        is_ball_touching_ground = self.physics.run_engine([player1_input, player2_input])
         terminated = False 
         if is_ball_touching_ground:
             if self.physics.ball.punch_effect_x < GROUND_HALF_WIDTH:
                 self.is_player_2_serve = True
-                self.reward = -1
+                if self.is_player_2_computer:
+                    self.reward = -1
+                else:
+                    self.reward = 1
             else:
                 self.is_player_2_serve = False
-                self.reward = 1
+                if self.is_player_2_computer:
+                    self.reward = 1
+                else:
+                    self.reward = -1
 
             terminated = True
         else:
@@ -109,12 +117,12 @@ class PykachuEnv(gym.Env):
             self.view.draw_background()
             self.view.draw_players_and_ball(self.physics) 
             pygame.display.update()
-            self.clock.tick(25)
+            self._clock.tick(25)
 
-    def reset(self, seed = None, is_player_2_serve = False):
+    def reset(self, seed = None):
         super().reset(seed = seed)
 
-        self.physics.reset(is_player_2_serve)
+        self.physics.reset(self.is_player_2_serve)
 
         if self.render_mode is not None:
             self.render()

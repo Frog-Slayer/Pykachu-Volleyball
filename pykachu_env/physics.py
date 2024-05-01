@@ -15,10 +15,10 @@ from constants import (
 )
 
 class PykaPhysics:
-    def __init__(self):
-        self.player1 = Player(is_player_2= False, is_computer=True)
-        self.player2 = Player(is_player_2= True, is_computer=True)
-        self.ball = Ball(False)
+    def __init__(self, is_player_2_computer):
+        self.player1 = Player(is_player_2= False, is_computer= not is_player_2_computer)
+        self.player2 = Player(is_player_2= True, is_computer= is_player_2_computer)
+        self.ball = Ball(is_player_2_serve=False)
         return
     
     def run_engine(self, user_inputs):
@@ -37,8 +37,8 @@ class UserInput:
             self.y_direction = 0
             self.power_hit = 0
         else : 
-            self.y_direction = action[0]
-            self.x_direction = action[1]
+            self.x_direction = action[0]
+            self.y_direction = action[1]
             self.power_hit   = action[2]
         return
     

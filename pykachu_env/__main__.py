@@ -1,14 +1,13 @@
 import gymnasium as gym
-import numpy as np
 from pykachu_volleyball_env import PykachuEnv
 
-env = PykachuEnv()
+env = PykachuEnv(is_player_2_computer=False)
 env.render_mode = 'human'
 
 is_player_2_serve = False
 
 for episode in range(4):
-    env.reset(is_player_2_serve = is_player_2_serve)
+    env.reset()
 
     while True:
         env.render()
@@ -17,10 +16,6 @@ for episode in range(4):
         print(info)
 
         if done:
-            if reward == 1:
-                is_player_2_serve = False
-            else:
-                is_player_2_serve = True
             break
 
 env.close()
