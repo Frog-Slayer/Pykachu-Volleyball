@@ -47,6 +47,23 @@ class PykachuEnv(gym.Env):
         return np.transpose(np.array(pixels), axes=(1, 0, 2))
 
     @property
+    def reward(self):
+        if self.is_ball_touching_ground:
+            if self.physics.ball.punch_effect_x < GROUND_HALF_WIDTH: #player2 wins
+                self.is_player_2_serve = True
+                return -1 if self.is_player_2_computer else 1
+            else:#player1 wins
+                self.is_player_2_serve = False
+                return 1 if self.is_player_2_computer else 1
+        else:
+            return 0
+
+
+    @property
+    def terminated(self):
+        return self.is_ball_touching_ground
+
+    @property
     def info(self):
         player1 = self.physics.player1
         player2 = self.physics.player2
@@ -74,27 +91,15 @@ class PykachuEnv(gym.Env):
         player1_input = physics.UserInput(action)
         player2_input = physics.UserInput(action)
 
-        is_ball_touching_ground = self.physics.run_engine([player1_input, player2_input])
-        terminated = False 
-        if is_ball_touching_ground:
-            if self.physics.ball.punch_effect_x < GROUND_HALF_WIDTH:
+        self.is_ball_touching_ground = self.physics.run_engine([player1_input, player2_input])
+
+        if self.is_ball_touching_ground:
+            if self.physics.ball.punch_effect_x < GROUND_HALF_WIDTH: #player2 wins
                 self.is_player_2_serve = True
-                if self.is_player_2_computer:
-                    self.reward = -1
-                else:
-                    self.reward = 1
-            else:
+            else:#player1 wins
                 self.is_player_2_serve = False
-                if self.is_player_2_computer:
-                    self.reward = 1
-                else:
-                    self.reward = -1
-
-            terminated = True
-        else:
-            self.reward = 0
-
-        return self.observation, self.reward, terminated, self.info
+ 
+        return self.observation, self.reward, self.terminated, self.info
 
 
     def render(self):

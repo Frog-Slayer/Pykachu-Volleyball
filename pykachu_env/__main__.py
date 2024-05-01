@@ -1,10 +1,11 @@
 import gymnasium as gym
 from pykachu_volleyball_env import PykachuEnv
 
+"""
+This is a test code
+"""
 env = PykachuEnv(is_player_2_computer=False)
 env.render_mode = 'human'
-
-is_player_2_serve = False
 
 for episode in range(4):
     env.reset()
