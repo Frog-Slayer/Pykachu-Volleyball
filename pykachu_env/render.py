@@ -102,8 +102,6 @@ class BallAnimatedSprite(pygame.sprite.Sprite):
         self.rect.center = self.position
         pygame.display.get_surface().blit(self.image, self.rect)
 
-    def set_position(self, x, y):
-        self.position = (x, y)
 
 class PlayerAnimatedSprite(pygame.sprite.Sprite):
     def __init__(self, position, texture):
@@ -139,7 +137,7 @@ class PlayerAnimatedSprite(pygame.sprite.Sprite):
 
         pygame.display.get_surface().blit(self.image, self.rect)
     
-    def setframe_num(self, state, frame_num):
+    def set_frame_num(self, state, frame_num):
         if (state < 4) :
             self.index =  5 * state + frame_num
         elif state == 4:
@@ -255,7 +253,7 @@ class GameViewDrawer:
         ball = physics.ball
 
         self.player1.position = (player1.x, player1.y)
-        self.player1.setframe_num(player1.state, player1.frame_num)
+        self.player1.set_frame_num(player1.state, player1.frame_num)
 
         if player1.state == 3 or player1.state == 4:
             self.player1.scale.x = -1 if player1.dive_direction == -1 else 1 
@@ -263,7 +261,7 @@ class GameViewDrawer:
             self.player1.scale.x = 1
 
         self.player2.position = (player2.x, player2.y)
-        self.player2.setframe_num(player2.state, player2.frame_num)
+        self.player2.set_frame_num(player2.state, player2.frame_num)
 
         if player2.state == 3 or player2.state == 4:
             self.player2.scale.x = 1 if player2.dive_direction == 1 else -1 
@@ -271,6 +269,7 @@ class GameViewDrawer:
             self.player2.scale.x = -1
 
         self.ball.position = (ball.x, ball.y)
+        self.ball.index = ball.rotation
 
         if ball.punch_effect_radius > 0:
             ball.punch_effect_radius -= 2
