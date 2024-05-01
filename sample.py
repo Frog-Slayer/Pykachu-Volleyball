@@ -11,8 +11,8 @@ for episode in range(5):
     while True:
         env.render()
         action = env.action_space.sample()
-        state, reward, done, info = env.step(action)
-        if done:
+        state, reward, terminated, info = env.step(action)
+        if terminated:
             break
 
 env.close()
