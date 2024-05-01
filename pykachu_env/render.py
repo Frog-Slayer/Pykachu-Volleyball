@@ -3,9 +3,11 @@ import json
 
 ASSETS_PATH = 'pykachu_env/assets'
 IMAGE_PATH = ASSETS_PATH + '/images'
+SPRITE_JSON = IMAGE_PATH + '/sprite_sheet.json'
+SPIRTE_IMG = IMAGE_PATH + '/sprite_sheet.png'
 SOUND_PATH = ASSETS_PATH + '/sounds'
 
-with open(IMAGE_PATH+ '/sprite_sheet.json') as f:
+with open(SPRITE_JSON) as f:
     sprite_json = json.load(f)
 
 
@@ -59,7 +61,7 @@ class Texture:
 
     def getCroppedImage(self, path): #works well
         if self.sheet is None: 
-            self.sheet= pygame.image.load(IMAGE_PATH + '/sprite_sheet.png').convert_alpha()
+            self.sheet= pygame.image.load(SPIRTE_IMG).convert_alpha()
 
         frame = sprite_json['frames'][path]['frame']
         rect = (frame['x'], frame['y'], frame['w'], frame['h']) 
