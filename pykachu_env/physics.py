@@ -37,8 +37,8 @@ class UserInput:
             self.y_direction = 0
             self.power_hit = 0
         else : 
-            self.x_direction = action[0]
-            self.y_direction = action[1]
+            self.x_direction = action[0] - 1 # down, noop, up
+            self.y_direction = action[1] - 1 # down, noop, up
             self.power_hit   = action[2]
         return
     
