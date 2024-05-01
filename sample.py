@@ -5,7 +5,7 @@ env = gym.make('PykachuVolleyball-v0',
                render_mode= "human", 
                is_player_2_computer=False)
 
-for episode in range(50):
+for episode in range(5):
     env.reset()
 
     while True:

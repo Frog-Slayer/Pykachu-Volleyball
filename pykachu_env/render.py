@@ -72,7 +72,7 @@ class Texture:
 
 class BallAnimatedSprite(pygame.sprite.Sprite):
 
-    def __init__(self, position, texture):
+    def __init__(self, texture):
         super(BallAnimatedSprite, self).__init__()
         self.texture = texture
 
@@ -92,8 +92,8 @@ class BallAnimatedSprite(pygame.sprite.Sprite):
         self.images = images
         self.index = 0
         self.image = self.images[self.index]
-        self.position = position
         self.rect = None
+        self.position = (0, 0)
 
     def update(self):
         self.image = self.images[self.index]
@@ -103,7 +103,7 @@ class BallAnimatedSprite(pygame.sprite.Sprite):
 
 
 class PlayerAnimatedSprite(pygame.sprite.Sprite):
-    def __init__(self, position, texture):
+    def __init__(self, texture):
         super(PlayerAnimatedSprite, self).__init__()
         self.texture = texture
 
@@ -125,7 +125,8 @@ class PlayerAnimatedSprite(pygame.sprite.Sprite):
         self.images = images
         self.index = 0
         self.image = self.images[self.index]
-        self.position = position
+
+        self.position = (0, 0)
         self.scale = Scale(1, 1) 
 
     def update(self):
@@ -170,7 +171,6 @@ class BackgroundSprite(pygame.sprite.Sprite):
             # Net Pillar
             self.pillar_top = self.texture.getCroppedImage(self.texture.NET_PILLAR_TOP) 
             self.pillar = self.texture.getCroppedImage(self.texture.NET_PILLAR) 
-
 
     def update(self):
         self.draw_sky()
@@ -217,8 +217,7 @@ class BackgroundSprite(pygame.sprite.Sprite):
 
 class SingleSprite(pygame.sprite.Sprite):
 
-    def __init__(self, path, position, texture):
-        self.position = position
+    def __init__(self, path, texture):
         self.texture = texture
         self.image = self.texture.getCroppedImage(path) 
 
@@ -226,6 +225,7 @@ class SingleSprite(pygame.sprite.Sprite):
         h = self.image.get_rect().h
         self.scale = Scale(w, h) 
         self.visible = False
+        self.position = (0, 0)
 
     def update(self):
         image = pygame.transform.scale(self.image, (self.scale.x, self.scale.y))
@@ -239,12 +239,15 @@ class GameViewDrawer:
         self.texture = texture
 
         self.background = BackgroundSprite(texture)
-        self.player1 = PlayerAnimatedSprite((0, 0), texture)
-        self.player2 = PlayerAnimatedSprite((0, 0), texture)
-        self.ball = BallAnimatedSprite((0, 0), texture)
-        self.ball_trail = SingleSprite(self.texture.BALL_TRAIL, (0, 0), texture)
-        self.ball_hyper = SingleSprite(self.texture.BALL_HYPER, (0, 0), texture)
-        self.punch = SingleSprite(self.texture.BALL_PUNCH, (0, 0), texture)
+        self.player1 = PlayerAnimatedSprite(texture)
+        self.player2 = PlayerAnimatedSprite(texture)
+        self.ball = BallAnimatedSprite(texture)
+        self.ball_trail = SingleSprite(self.texture.BALL_TRAIL, texture)
+        self.ball_hyper = SingleSprite(self.texture.BALL_HYPER, texture)
+        self.punch = SingleSprite(self.texture.BALL_PUNCH, texture)
+        self.player1_shadow = SingleSprite(self.texture.SHADOW, texture)
+        self.player2_shadow = SingleSprite(self.texture.SHADOW, texture)
+        self.ball_shadow = SingleSprite(self.texture.SHADOW, texture)
     
     def draw_players_and_ball(self, physics):
         player1 = physics.player1
@@ -287,6 +290,14 @@ class GameViewDrawer:
         else:
             self.ball_hyper.visible = False
             self.ball_trail.visible = False
+
+        self.player1_shadow.position = (player1.x, 273)
+        self.player2_shadow.position = (player2.x, 273)
+        self.ball_shadow.position = (ball.x, 273)
+
+        self.player1_shadow.update()
+        self.player2_shadow.update()
+        self.ball_shadow.update()
 
         self.player1.update()
         self.player2.update()
