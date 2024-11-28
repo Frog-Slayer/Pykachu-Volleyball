@@ -16,7 +16,7 @@ RL environment for 'single' agent. The opponent is the basic AI, originally impl
 Multi-agent environment using pettingzoo will be added later
 """
 class PykachuEnv(gym.Env):
-    action_space = MultiDiscrete([3, 3, 1]) 
+    action_space = MultiDiscrete([3, 3, 2]) 
     """
     (node, left, right), (none, up, down), (none, power hit)
     """

@@ -24,14 +24,14 @@ Create your environment through `gym.make('PykachuVolleyball-v0')`. Options incl
 
 |                   |                          |
 |-------------------|--------------------------|
-| Action Space      | MultiDiscrete([3, 3, 1]) |
+| Action Space      | MultiDiscrete([3, 3, 2]) |
 | Observation Space | (432, 304, 3)            |
 | Observation High  | 255                      |
 | Observation Low   | 0                        |
 
 
 ## Action Space
-The action space is `MultiDiscrete([3, 3, 1])`, and each corresponds to left-right input, up-down input, and power hit input in order.
+The action space is `MultiDiscrete([3, 3, 2])`, and each corresponds to left-right input, up-down input, and power hit input in order.
 
 ### `action_space[0]` (left-right movement)
 | Value             | Meaning                  |
